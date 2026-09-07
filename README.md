@@ -18,13 +18,17 @@ npm install
 npm run dev
 ```
 
-La app queda en `http://localhost:3050`.
+En el PC: `https://localhost:3050` (certificado de desarrollo; acéptalo una vez).
+
+Desde otro dispositivo en la misma Wi‑Fi usa la IP LAN de este equipo, por ejemplo `https://192.168.0.120:3050`. El escáner de cámara del teléfono exige HTTPS.
+
+Si `VITE_API_URL` está vacío, Vite proxea `/user`, `/participant` y `/scan` al API en el puerto 3040. Así el teléfono no tiene que hablar con `localhost`.
 
 ## Variables de entorno
 
 | Variable | Uso |
 |---|---|
-| `VITE_API_URL` | URL del API (`http://localhost:3040`) |
+| `VITE_API_URL` | URL del API. Vacío = mismo origen (proxy de Vite). Directo: `http://localhost:3040` |
 | `VITE_API_DEBUG` | `true` para logs de Axios |
 
 ## Scripts

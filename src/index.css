@@ -319,6 +319,7 @@ a {
 
 .viewfinder {
   position: relative;
+  width: 100%;
   aspect-ratio: 4 / 3;
   border-radius: 16px;
   overflow: hidden;
@@ -326,16 +327,26 @@ a {
   margin-bottom: 16px;
 }
 
+.viewfinder-idle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: #e5eeff;
+}
+
 .reticle {
   position: absolute;
-  inset: 18%;
-  border: 2px solid rgba(248, 249, 255, 0.35);
+  inset: 16%;
+  border: 2px solid rgba(248, 249, 255, 0.55);
   border-radius: 12px;
+  pointer-events: none;
   box-shadow:
-    12px 12px 0 -10px #f8f9ff,
-    -12px 12px 0 -10px #f8f9ff,
-    12px -12px 0 -10px #f8f9ff,
-    -12px -12px 0 -10px #f8f9ff;
+    10px 10px 0 -8px #f8f9ff,
+    -10px 10px 0 -8px #f8f9ff,
+    10px -10px 0 -8px #f8f9ff,
+    -10px -10px 0 -8px #f8f9ff;
 }
 
 .scan-line {
@@ -417,21 +428,49 @@ a {
   padding: 24px 0 48px;
 }
 
-#qr-reader,
-#qr-reader video,
-#qr-reader canvas {
-  width: 100% !important;
-  height: 100% !important;
-  border: none !important;
-}
-
-#qr-reader {
+.qr-reader {
   position: absolute;
   inset: 0;
+  overflow: hidden;
 }
 
-#qr-reader img {
+.qr-reader #qr-shaded-region,
+#qr-shaded-region {
+  display: none !important;
+}
+
+.qr-reader video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  background: #0b1c30;
+}
+
+.qr-reader canvas {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.qr-reader img {
   display: none;
+}
+
+.viewfinder-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+  text-align: center;
+  color: #fff;
+  background: rgba(11, 28, 48, 0.72);
+  font-size: 13px;
 }
 
 .login-page {

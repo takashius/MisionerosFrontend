@@ -14,7 +14,7 @@ import {
 
 const DEBUG: boolean = import.meta.env.VITE_API_DEBUG;
 const locale = 'es';
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = String(import.meta.env.VITE_API_URL || '').trim();
 
 const ERDEAxios = axios.create();
 
@@ -63,7 +63,9 @@ ERDEAxios.interceptors.request.use(
       if (DEBUG === true) console.log('ResponseType', responseType);
     }
 
-    config.url = urlJoin(apiUrl!, `${config.url}`);
+    if (apiUrl) {
+      config.url = urlJoin(apiUrl, `${config.url}`);
+    }
     if (DEBUG === true) {
       console.log('URL', config.method, config.url);
       if (config.data) {

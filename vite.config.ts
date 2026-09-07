@@ -1,12 +1,25 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
+import basicSsl from '@vitejs/plugin-basic-ssl';
 import path from 'path';
 
+const apiProxy = {
+  target: 'http://127.0.0.1:3040',
+  changeOrigin: true,
+};
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), basicSsl()],
   server: {
+    host: true,
     port: 3050,
     strictPort: true,
+    proxy: {
+      '/user': apiProxy,
+      '/participant': apiProxy,
+      '/scan': apiProxy,
+      '/active-response': apiProxy,
+    },
   },
   resolve: {
     alias: {
