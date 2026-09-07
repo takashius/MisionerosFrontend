@@ -354,6 +354,8 @@ a {
   color: #64748b;
   font-size: 11px;
   line-height: 1.15;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .mobile-tabbar-icon {

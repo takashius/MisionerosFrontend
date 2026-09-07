@@ -20,6 +20,7 @@ import InfoPage from '@pages/InfoPage';
 import Cronograma from '@pages/Cronograma';
 import CronogramaAdmin from '@pages/admin/CronogramaAdmin';
 import Perfil from '@pages/Perfil';
+import Mapa from '@pages/Mapa';
 
 const App = () => (
   <Layout style={{ minHeight: '100vh', background: '#F8F9FF' }}>
@@ -78,15 +79,7 @@ const App = () => (
             />
           }
         />
-        <Route
-          path="/mapa"
-          element={
-            <InfoPage
-              title="Mapa CEV"
-              description="Salón San Juan Pablo II, capilla, comedor y residencias."
-            />
-          }
-        />
+        <Route path="/mapa" element={<Mapa />} />
         <Route path="/perfil" element={<Perfil />} />
       </Route>
 
