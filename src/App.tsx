@@ -1,58 +1,125 @@
-import { Layout, Typography, Alert, Spin } from 'antd';
-import { useQuery } from '@tanstack/react-query';
+import { Layout } from 'antd';
 import { Route, Routes } from 'react-router-dom';
-import ERDEAxios from '@api/ERDEAxios';
-
-const { Content } = Layout;
-const { Title, Paragraph } = Typography;
-
-const useBackendActive = () =>
-  useQuery({
-    queryKey: ['active-response'],
-    queryFn: async () => {
-      const { data } = await ERDEAxios.get<{ active: boolean }>('/active-response');
-      return data;
-    },
-    retry: false,
-  });
-
-const Home = () => {
-  const { data, isLoading, isError } = useBackendActive();
-
-  return (
-    <Content style={{ padding: 48, maxWidth: 720, margin: '0 auto' }}>
-      <Title level={2}>Misioneros</Title>
-      <Paragraph>
-        Frontend inicializado con React, Vite, Ant Design, TanStack Query y Axios
-        (ERDEAxios).
-      </Paragraph>
-      {isLoading && <Spin />}
-      {isError && (
-        <Alert
-          type="warning"
-          showIcon
-          message="No se pudo conectar con el backend"
-          description="Arranca el API en http://localhost:3040 y recarga."
-        />
-      )}
-      {data?.active && (
-        <Alert type="success" showIcon message="Backend conectado" />
-      )}
-    </Content>
-  );
-};
-
-const Login = () => (
-  <Content style={{ padding: 48, maxWidth: 720, margin: '0 auto' }}>
-    <Title level={3}>Iniciar sesión</Title>
-    <Paragraph>La pantalla de autenticación se conectará aquí.</Paragraph>
-  </Content>
-);
+import PortalLayout from '@layouts/PortalLayout';
+import MobileLayout from '@layouts/MobileLayout';
+import AdminLayout from '@layouts/AdminLayout';
+import Portal from '@pages/Portal';
+import Pase from '@pages/Pase';
+import Escaner from '@pages/Escaner';
+import Admin from '@pages/Admin';
+import Login from '@pages/Login';
+import InfoPage from '@pages/InfoPage';
 
 const App = () => (
-  <Layout style={{ minHeight: '100vh' }}>
+  <Layout style={{ minHeight: '100vh', background: '#F8F9FF' }}>
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route element={<PortalLayout />}>
+        <Route path="/" element={<Portal />} />
+        <Route
+          path="/cronograma"
+          element={
+            <InfoPage
+              title="Cronograma"
+              description="Agenda oficial de ponencias, liturgia y mesas de trabajo."
+            />
+          }
+        />
+        <Route
+          path="/ponentes"
+          element={
+            <InfoPage
+              title="Ponentes"
+              description="Voces de la misión digital en las 24 diócesis y vicariatos."
+            />
+          }
+        />
+        <Route
+          path="/vivo"
+          element={
+            <InfoPage
+              title="Transmisión en Vivo"
+              description="Señal oficial de la asamblea para quienes siguen desde sus diócesis."
+            />
+          }
+        />
+        <Route
+          path="/ayuda"
+          element={
+            <InfoPage
+              title="Ayuda / Soporte"
+              description="Acreditación, hospedaje y mesa técnica pastoral."
+            />
+          }
+        />
+        <Route
+          path="/contacto"
+          element={
+            <InfoPage
+              title="Contacto CEV"
+              description="Conferencia Episcopal Venezolana · Sede Montalbán."
+            />
+          }
+        />
+      </Route>
+
+      <Route element={<MobileLayout />}>
+        <Route path="/pase" element={<Pase />} />
+        <Route path="/escaner" element={<Escaner />} />
+        <Route
+          path="/programa"
+          element={
+            <InfoPage
+              title="Programa"
+              description="Itinerario de la asamblea para acreditados en sede."
+            />
+          }
+        />
+        <Route
+          path="/mapa"
+          element={
+            <InfoPage
+              title="Mapa CEV"
+              description="Salón San Juan Pablo II, capilla, comedor y residencias."
+            />
+          }
+        />
+        <Route
+          path="/perfil"
+          element={
+            <InfoPage
+              title="Mi Perfil"
+              description="Datos de acreditación, hospedaje y contacto diocesano."
+            />
+          }
+        />
+      </Route>
+
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Admin />} />
+        <Route
+          path="alojamientos"
+          element={
+            <InfoPage title="Alojamientos" description="Asignación de habitaciones en sede CEV." />
+          }
+        />
+        <Route
+          path="finanzas"
+          element={<InfoPage title="Finanzas" description="Aportes eclesiásticos y conciliación." />}
+        />
+        <Route
+          path="reportes"
+          element={<InfoPage title="Reportes" description="Indicadores de inscripción y check-in." />}
+        />
+        <Route
+          path="ajustes"
+          element={<InfoPage title="Ajustes Generales" description="Configuración del evento y del portal CEV." />}
+        />
+        <Route
+          path="delegaciones"
+          element={<InfoPage title="Delegaciones" description="Equipos diocesanos acreditados en Caracas 2026." />}
+        />
+      </Route>
+
       <Route path="/login" element={<Login />} />
     </Routes>
   </Layout>

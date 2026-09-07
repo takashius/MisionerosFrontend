@@ -18,6 +18,8 @@ export default defineConfig({
       '@context': path.resolve(__dirname, 'src/context'),
       '@utils': path.resolve(__dirname, 'src/utils'),
       '@pages': path.resolve(__dirname, 'src/pages'),
+      '@layouts': path.resolve(__dirname, 'src/layouts'),
+      '@data': path.resolve(__dirname, 'src/data'),
     },
   },
 });

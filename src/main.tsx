@@ -5,6 +5,7 @@ import { App as AntApp, ConfigProvider } from 'antd';
 import esES from 'antd/locale/es_ES';
 import { BrowserRouter } from 'react-router-dom';
 import { createAppQueryClient } from '@api/createAppQueryClient';
+import { themeConfig } from './theme/config';
 import App from './App';
 import './index.css';
 
@@ -13,7 +14,7 @@ const queryClient = createAppQueryClient();
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ConfigProvider locale={esES}>
+      <ConfigProvider locale={esES} theme={themeConfig}>
         <AntApp>
           <BrowserRouter>
             <App />

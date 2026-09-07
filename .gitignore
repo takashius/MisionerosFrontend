@@ -6,3 +6,4 @@ build
 .vscode
 coverage
 *.tsbuildinfo
+src/design/

@@ -10,7 +10,9 @@
       "@app-types/*": ["src/types/*"],
       "@context/*": ["src/context/*"],
       "@utils/*": ["src/utils/*"],
-      "@pages/*": ["src/pages/*"]
+      "@pages/*": ["src/pages/*"],
+      "@layouts/*": ["src/layouts/*"],
+      "@data/*": ["src/data/*"]
     }
   }
 }
