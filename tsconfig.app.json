@@ -18,17 +18,16 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": ".",
     "paths": {
-      "@api/*": ["src/api/*"],
-      "@components/*": ["src/components/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@app-types/*": ["src/types/*"],
-      "@context/*": ["src/context/*"],
-      "@utils/*": ["src/utils/*"],
-      "@pages/*": ["src/pages/*"],
-      "@layouts/*": ["src/layouts/*"],
-      "@data/*": ["src/data/*"]
+      "@api/*": ["./src/api/*"],
+      "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@app-types/*": ["./src/types/*"],
+      "@context/*": ["./src/context/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@layouts/*": ["./src/layouts/*"],
+      "@data/*": ["./src/data/*"]
     }
   },
   "include": ["src"]
