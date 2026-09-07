@@ -42,7 +42,7 @@ const { Title, Paragraph, Text } = Typography;
 const Portal = () => {
   const navigate = useNavigate();
   const { message } = App.useApp();
-  const { isStaff } = useAuth();
+  const { isStaff, isLogistics, homePath } = useAuth();
   const screens = Grid.useBreakpoint();
   const [helpOpen, setHelpOpen] = useState(false);
   const lookup = useLookupParticipant();
@@ -242,8 +242,8 @@ const Portal = () => {
               asignación de hospedajes, salas temáticas y reportes para obispos.
             </Paragraph>
             {isStaff ? (
-              <Button type="primary" block onClick={() => navigate('/admin')}>
-                Ir al Dashboard
+              <Button type="primary" block onClick={() => navigate(homePath)}>
+                {isLogistics ? 'Ir al escáner' : 'Ir al Dashboard'}
               </Button>
             ) : (
               <AdminLoginForm />

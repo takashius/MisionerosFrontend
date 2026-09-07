@@ -47,7 +47,7 @@ Si `VITE_API_URL` está vacío, Vite proxea `/user`, `/participant` y `/scan` al
 | `/` | Portal público |
 | `/registro` | Inscripción pública (aforo máximo 80) |
 | `/pase/:token` | Credencial digital con QR (solo si el pago está confirmado) |
-| `/escaner` | Check-in / check-out. Requiere `LOGISTICA`, `ADMIN` o `SUPER_ADMIN` |
+| `/escaner` | Check-in / check-out. Destino de `LOGISTICA`; también `ADMIN` / `SUPER_ADMIN` |
 | `/login` | Login del personal CEV |
 | `/recuperar` | Olvidé mi contraseña (pide código al correo) |
 | `/recuperar/codigo` | Código + nueva clave |

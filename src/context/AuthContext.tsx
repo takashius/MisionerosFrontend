@@ -2,9 +2,11 @@ import { useCallback, useMemo, useState, type ReactNode } from 'react';
 import { AuthContext } from './AuthContextInstance';
 import {
   isAdminRole,
+  isLogisticsRole,
   isPaymentRole,
   isScanRole,
   isStaffRole,
+  staffHomePath,
   type AuthUser,
   type LoginResponse,
 } from '@app-types/auth';
@@ -58,8 +60,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       token,
       isAdmin: isAdminRole(roles),
       isStaff: isStaffRole(roles),
+      isLogistics: isLogisticsRole(roles),
       canConfirmPayment: isPaymentRole(roles),
       canScan: isScanRole(roles),
+      homePath: staffHomePath(roles),
       login,
       logout,
     };

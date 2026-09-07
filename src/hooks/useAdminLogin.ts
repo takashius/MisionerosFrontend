@@ -2,7 +2,7 @@ import { App } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useLogin } from '@api/auth';
 import { useAuth } from '@context/useAuth';
-import { isStaffRole } from '@app-types/auth';
+import { isStaffRole, staffHomePath } from '@app-types/auth';
 import { wasErrorToastShown } from '@utils/apiAuthError';
 import { getLoginErrorMessage } from '@utils/getLoginErrorMessage';
 
@@ -20,7 +20,7 @@ export const useAdminLogin = () => {
           return;
         }
         login(data);
-        navigate('/admin');
+        navigate(staffHomePath(data.role));
       },
       onError(error) {
         if (wasErrorToastShown(error)) return;

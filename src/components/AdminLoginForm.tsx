@@ -7,7 +7,7 @@ type AdminLoginFormProps = {
   submitLabel?: string;
 };
 
-const AdminLoginForm = ({ submitLabel = 'Ingresar al Dashboard' }: AdminLoginFormProps) => {
+const AdminLoginForm = ({ submitLabel = 'Ingresar' }: AdminLoginFormProps) => {
   const { loginAdmin, isPending } = useAdminLogin();
 
   return (

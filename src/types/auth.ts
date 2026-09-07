@@ -27,8 +27,10 @@ export type AuthContextType = {
   token: string | null;
   isAdmin: boolean;
   isStaff: boolean;
+  isLogistics: boolean;
   canConfirmPayment: boolean;
   canScan: boolean;
+  homePath: string;
   login: (data: LoginResponse) => void;
   logout: () => void;
 };
@@ -47,3 +49,10 @@ export const isPaymentRole = (role?: string | string[] | null): boolean =>
 
 export const isScanRole = (role?: string | string[] | null): boolean =>
   toRoles(role).some((item) => SCAN_ROLES.includes(item as ScanRole));
+
+/** Cuenta solo de puerta: escáner, sin panel de gestión. */
+export const isLogisticsRole = (role?: string | string[] | null): boolean =>
+  toRoles(role).includes('LOGISTICA') && !isAdminRole(role);
+
+export const staffHomePath = (role?: string | string[] | null): string =>
+  isLogisticsRole(role) ? '/escaner' : '/admin';

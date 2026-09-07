@@ -7,10 +7,10 @@ import logo from '../assets/logo.svg';
 const { Title, Paragraph } = Typography;
 
 const Login = () => {
-  const { isStaff } = useAuth();
+  const { isStaff, homePath } = useAuth();
 
   if (isStaff) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to={homePath} replace />;
   }
 
   return (
