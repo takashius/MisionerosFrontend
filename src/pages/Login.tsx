@@ -1,12 +1,17 @@
-import { Button, Card, Form, Input, Typography } from 'antd';
-import { LockOutlined, MailOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { Card, Typography } from 'antd';
+import { Link, Navigate } from 'react-router-dom';
+import { useAuth } from '@context/useAuth';
+import AdminLoginForm from '@components/AdminLoginForm';
 import logo from '../assets/logo.svg';
 
 const { Title, Paragraph } = Typography;
 
 const Login = () => {
-  const navigate = useNavigate();
+  const { isAdmin } = useAuth();
+
+  if (isAdmin) {
+    return <Navigate to="/admin" replace />;
+  }
 
   return (
     <div className="login-page">
@@ -17,23 +22,12 @@ const Login = () => {
         </Title>
         <Paragraph type="secondary">
           Acceso restringido al panel de acreditación de la I Asamblea de
-          Misioneros Digitales.
+          Misioneros Digitales. Solo cuentas ADMIN o SUPER_ADMIN.
         </Paragraph>
-        <Form layout="vertical" onFinish={() => navigate('/admin')}>
-          <Form.Item
-            name="email"
-            label="Correo Institucional"
-            rules={[{ required: true, type: 'email' }]}
-          >
-            <Input size="large" prefix={<MailOutlined />} placeholder="vicaria@cev.org.ve" />
-          </Form.Item>
-          <Form.Item name="password" label="Contraseña" rules={[{ required: true }]}>
-            <Input.Password size="large" prefix={<LockOutlined />} />
-          </Form.Item>
-          <Button type="primary" htmlType="submit" block>
-            Ingresar al Dashboard
-          </Button>
-        </Form>
+        <AdminLoginForm />
+        <div style={{ marginTop: 8 }}>
+          <Link to="/">Volver al portal</Link>
+        </div>
       </Card>
     </div>
   );

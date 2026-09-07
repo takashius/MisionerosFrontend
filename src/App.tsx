@@ -8,6 +8,10 @@ import Pase from '@pages/Pase';
 import Escaner from '@pages/Escaner';
 import Admin from '@pages/Admin';
 import Login from '@pages/Login';
+import RecoverPassword from '@pages/RecoverPassword';
+import RecoveryStep2 from '@pages/RecoveryStep2';
+import Users from '@pages/users/Users';
+import RequireAdmin from '@components/RequireAdmin';
 import InfoPage from '@pages/InfoPage';
 
 const App = () => (
@@ -94,33 +98,38 @@ const App = () => (
         />
       </Route>
 
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<Admin />} />
-        <Route
-          path="alojamientos"
-          element={
-            <InfoPage title="Alojamientos" description="Asignación de habitaciones en sede CEV." />
-          }
-        />
-        <Route
-          path="finanzas"
-          element={<InfoPage title="Finanzas" description="Aportes eclesiásticos y conciliación." />}
-        />
-        <Route
-          path="reportes"
-          element={<InfoPage title="Reportes" description="Indicadores de inscripción y check-in." />}
-        />
-        <Route
-          path="ajustes"
-          element={<InfoPage title="Ajustes Generales" description="Configuración del evento y del portal CEV." />}
-        />
-        <Route
-          path="delegaciones"
-          element={<InfoPage title="Delegaciones" description="Equipos diocesanos acreditados en Caracas 2026." />}
-        />
+      <Route element={<RequireAdmin />}>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Admin />} />
+          <Route path="usuarios" element={<Users />} />
+          <Route
+            path="alojamientos"
+            element={
+              <InfoPage title="Alojamientos" description="Asignación de habitaciones en sede CEV." />
+            }
+          />
+          <Route
+            path="finanzas"
+            element={<InfoPage title="Finanzas" description="Aportes eclesiásticos y conciliación." />}
+          />
+          <Route
+            path="reportes"
+            element={<InfoPage title="Reportes" description="Indicadores de inscripción y check-in." />}
+          />
+          <Route
+            path="ajustes"
+            element={<InfoPage title="Ajustes Generales" description="Configuración del evento y del portal CEV." />}
+          />
+          <Route
+            path="delegaciones"
+            element={<InfoPage title="Delegaciones" description="Equipos diocesanos acreditados en Caracas 2026." />}
+          />
+        </Route>
       </Route>
 
       <Route path="/login" element={<Login />} />
+      <Route path="/recuperar" element={<RecoverPassword />} />
+      <Route path="/recuperar/codigo" element={<RecoveryStep2 />} />
     </Routes>
   </Layout>
 );

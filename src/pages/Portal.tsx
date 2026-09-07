@@ -19,7 +19,6 @@ import {
   HomeOutlined,
   IdcardOutlined,
   LockOutlined,
-  MailOutlined,
   MessageOutlined,
   PhoneOutlined,
   QrcodeOutlined,
@@ -30,21 +29,20 @@ import {
   WifiOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@context/useAuth';
+import AdminLoginForm from '@components/AdminLoginForm';
 import logo from '../assets/logo.svg';
 
 const { Title, Paragraph, Text } = Typography;
 
 const Portal = () => {
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const screens = Grid.useBreakpoint();
   const [helpOpen, setHelpOpen] = useState(false);
 
   const onAttendee = ({ cedula }: { cedula: string }) => {
     navigate(`/pase?cedula=${encodeURIComponent(cedula.trim())}`);
-  };
-
-  const onAdmin = () => {
-    navigate('/admin');
   };
 
   return (
@@ -211,29 +209,13 @@ const Portal = () => {
               Administración de comisiones, balances de aportes eclesiásticos,
               asignación de hospedajes, salas temáticas y reportes para obispos.
             </Paragraph>
-            <Form layout="vertical" onFinish={onAdmin}>
-              <Form.Item
-                name="email"
-                label="Correo Institucional"
-                rules={[{ required: true, type: 'email', message: 'Correo institucional' }]}
-              >
-                <Input
-                  size="large"
-                  prefix={<MailOutlined />}
-                  placeholder="vicaria@cev.org.ve"
-                />
-              </Form.Item>
-              <Form.Item
-                name="password"
-                label="Contraseña Cifrada"
-                rules={[{ required: true, message: 'Ingresa la contraseña' }]}
-              >
-                <Input.Password size="large" prefix={<LockOutlined />} placeholder="••••••••••••" />
-              </Form.Item>
-              <Button type="primary" htmlType="submit" block>
-                Ingresar al Dashboard
+            {isAdmin ? (
+              <Button type="primary" block onClick={() => navigate('/admin')}>
+                Ir al Dashboard
               </Button>
-            </Form>
+            ) : (
+              <AdminLoginForm />
+            )}
             <Text type="secondary" style={{ display: 'block', marginTop: 16, fontSize: 12 }}>
               Autenticación con doble factor (2FA) requerida para la Curia.
             </Text>

@@ -1,4 +1,4 @@
-import { Layout, Menu, Avatar, Space, Typography } from 'antd';
+import { Layout, Menu, Avatar, Button, Dropdown, Space, Typography } from 'antd';
 import {
   IdcardOutlined,
   HomeOutlined,
@@ -7,15 +7,19 @@ import {
   SettingOutlined,
   TeamOutlined,
   BellOutlined,
-  QuestionCircleOutlined,
+  LogoutOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '@context/useAuth';
+import { useLogout } from '@api/auth';
 import logo from '../assets/logo.svg';
 
 const { Sider, Header, Content } = Layout;
 
 const items = [
   { key: '/admin', icon: <IdcardOutlined />, label: <Link to="/admin">Acreditación</Link> },
+  { key: '/admin/usuarios', icon: <UserOutlined />, label: <Link to="/admin/usuarios">Usuarios</Link> },
   { key: '/admin/alojamientos', icon: <HomeOutlined />, label: <Link to="/admin/alojamientos">Alojamientos</Link> },
   { key: '/admin/finanzas', icon: <WalletOutlined />, label: <Link to="/admin/finanzas">Finanzas</Link> },
   { key: '/admin/reportes', icon: <BarChartOutlined />, label: <Link to="/admin/reportes">Reportes</Link> },
@@ -26,6 +30,21 @@ const items = [
 
 const AdminLayout = () => {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const logoutMutation = useLogout();
+
+  const displayName = [user?.name, user?.lastName].filter(Boolean).join(' ') || 'Administración CEV';
+  const initials = (user?.name?.[0] || 'A') + (user?.lastName?.[0] || '');
+
+  const onLogout = () => {
+    logoutMutation.mutate(undefined, {
+      onSettled: () => {
+        logout();
+        navigate('/');
+      },
+    });
+  };
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -43,16 +62,30 @@ const AdminLayout = () => {
         </Link>
         <Space size="middle">
           <BellOutlined style={{ fontSize: 18, color: '#444651' }} />
-          <QuestionCircleOutlined style={{ fontSize: 18, color: '#444651' }} />
           <span style={{ textAlign: 'right', lineHeight: 1.2 }}>
             <Typography.Text strong style={{ display: 'block' }}>
-              Administración CEV
+              {displayName}
             </Typography.Text>
             <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-              Superintendente
+              {user?.email}
             </Typography.Text>
           </span>
-          <Avatar style={{ background: '#1E3A8A' }}>CEV</Avatar>
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: 'logout',
+                  icon: <LogoutOutlined />,
+                  label: 'Cerrar sesión',
+                  onClick: onLogout,
+                },
+              ],
+            }}
+          >
+            <Button type="text" style={{ padding: 0, height: 'auto' }}>
+              <Avatar style={{ background: '#1E3A8A' }}>{initials.toUpperCase()}</Avatar>
+            </Button>
+          </Dropdown>
         </Space>
       </Header>
       <Layout>
