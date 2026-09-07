@@ -30,24 +30,17 @@ import {
   WifiOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { findParticipant } from '../data/participants';
 import logo from '../assets/logo.svg';
 
 const { Title, Paragraph, Text } = Typography;
 
 const Portal = () => {
   const navigate = useNavigate();
-  const { message } = App.useApp();
   const screens = Grid.useBreakpoint();
   const [helpOpen, setHelpOpen] = useState(false);
 
   const onAttendee = ({ cedula }: { cedula: string }) => {
-    const found = findParticipant(cedula);
-    if (!found) {
-      message.warning('No encontramos esa cédula. Prueba con V-19.482.109');
-      return;
-    }
-    navigate(`/pase?cedula=${encodeURIComponent(found.cedula)}`);
+    navigate(`/pase?cedula=${encodeURIComponent(cedula.trim())}`);
   };
 
   const onAdmin = () => {

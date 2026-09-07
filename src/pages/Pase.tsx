@@ -16,10 +16,10 @@ const { Title, Text, Paragraph } = Typography;
 const Pase = () => {
   const { message } = App.useApp();
   const [params] = useSearchParams();
-  const participant = useMemo(() => {
-    const cedula = params.get('cedula');
-    return (cedula && findParticipant(cedula)) || defaultParticipant;
-  }, [params]);
+  const participant = useMemo(
+    () => resolveParticipant(params.get('cedula')),
+    [params],
+  );
 
   return (
     <div className="pase-page">

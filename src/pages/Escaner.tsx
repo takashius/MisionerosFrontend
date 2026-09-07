@@ -36,12 +36,8 @@ const Escaner = () => {
   };
 
   const searchManual = () => {
-    const found = findParticipant(cedula);
-    if (!found) {
-      message.warning('No hay acreditación con esa cédula');
-      return;
-    }
-    setScanned(found);
+    if (!cedula.trim()) return;
+    setScanned(resolveParticipant(cedula));
     setManualOpen(false);
     setCedula('');
   };
