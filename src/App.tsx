@@ -114,28 +114,6 @@ const App = () => (
               </RequireAdminOnly>
             }
           />
-          <Route
-            path="alojamientos"
-            element={
-              <InfoPage title="Alojamientos" description="Asignación de habitaciones en sede CEV." />
-            }
-          />
-          <Route
-            path="finanzas"
-            element={<InfoPage title="Finanzas" description="Aportes eclesiásticos y conciliación." />}
-          />
-          <Route
-            path="reportes"
-            element={<InfoPage title="Reportes" description="Indicadores de inscripción y check-in." />}
-          />
-          <Route
-            path="ajustes"
-            element={<InfoPage title="Ajustes Generales" description="Configuración del evento y del portal CEV." />}
-          />
-          <Route
-            path="delegaciones"
-            element={<InfoPage title="Delegaciones" description="Equipos diocesanos acreditados en Caracas 2026." />}
-          />
         </Route>
       </Route>
 

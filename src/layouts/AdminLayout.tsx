@@ -1,16 +1,5 @@
 import { Layout, Menu, Avatar, Button, Dropdown, Space, Typography } from 'antd';
-import {
-  IdcardOutlined,
-  HomeOutlined,
-  WalletOutlined,
-  BarChartOutlined,
-  SettingOutlined,
-  TeamOutlined,
-  ScanOutlined,
-  BellOutlined,
-  LogoutOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { IdcardOutlined, TeamOutlined, BellOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@context/useAuth';
 import { useLogout } from '@api/auth';
@@ -21,7 +10,7 @@ const { Sider, Header, Content } = Layout;
 const AdminLayout = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { user, logout, isAdmin, canScan } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
   const logoutMutation = useLogout();
 
   const items = [
@@ -40,21 +29,6 @@ const AdminLayout = () => {
           },
         ]
       : []),
-    ...(canScan
-      ? [
-          {
-            key: '/escaner',
-            icon: <ScanOutlined />,
-            label: <Link to="/escaner">Escáner</Link>,
-          },
-        ]
-      : []),
-    { key: '/admin/alojamientos', icon: <HomeOutlined />, label: <Link to="/admin/alojamientos">Alojamientos</Link> },
-    { key: '/admin/finanzas', icon: <WalletOutlined />, label: <Link to="/admin/finanzas">Finanzas</Link> },
-    { key: '/admin/reportes', icon: <BarChartOutlined />, label: <Link to="/admin/reportes">Reportes</Link> },
-    { type: 'divider' as const },
-    { key: '/admin/ajustes', icon: <SettingOutlined />, label: <Link to="/admin/ajustes">Ajustes Generales</Link> },
-    { key: '/admin/delegaciones', icon: <TeamOutlined />, label: <Link to="/admin/delegaciones">Delegaciones</Link> },
   ];
 
   const displayName = [user?.name, user?.lastName].filter(Boolean).join(' ') || 'Administración CEV';
