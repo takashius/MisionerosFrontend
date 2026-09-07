@@ -9,6 +9,7 @@ import {
   Input,
   Modal,
   Popconfirm,
+  QRCode,
   Select,
   Space,
   Table,
@@ -61,6 +62,7 @@ const Participantes = () => {
   const [paying, setPaying] = useState<Participant | null>(null);
   const [editing, setEditing] = useState<Participant | null>(null);
   const [lodging, setLodging] = useState<Participant | null>(null);
+  const [qrParticipant, setQrParticipant] = useState<Participant | null>(null);
 
   const list = useParticipantList({ page, search, estado, tipo });
   const confirmPayment = useConfirmPayment();
@@ -125,18 +127,16 @@ const Participantes = () => {
           )}
           {canScan && (
             <Button size="small" icon={<EditOutlined />} onClick={() => setEditing(row)}>
-              Tipografía
+              Editar
             </Button>
           )}
           <Button size="small" icon={<HomeOutlined />} onClick={() => setLodging(row)}>
             Habitación
           </Button>
           {BADGE_STATES.includes(row.estado) && (
-            <Link to={`/pase/${row.publicToken}`}>
-              <Button size="small" icon={<QrcodeOutlined />}>
-                Ver QR
-              </Button>
-            </Link>
+            <Button size="small" icon={<QrcodeOutlined />} onClick={() => setQrParticipant(row)}>
+              Ver QR
+            </Button>
           )}
           {canConfirmPayment && row.estado === 'registrado' && (
             <Popconfirm
@@ -274,6 +274,8 @@ const Participantes = () => {
         }}
       />
 
+      <QrModal participant={qrParticipant} onCancel={() => setQrParticipant(null)} />
+
       <LodgingModal
         participant={lodging}
         loading={updateLodging.isPending}
@@ -293,6 +295,53 @@ const Participantes = () => {
         }}
       />
     </div>
+  );
+};
+
+const QrModal = ({
+  participant,
+  onCancel,
+}: {
+  participant: Participant | null;
+  onCancel: () => void;
+}) => {
+  const lodging = participant
+    ? participant.habitacionAsignada
+      ? participant.habitacionAsignada
+      : participant.requiereAlojamiento
+        ? 'Alojamiento por asignar'
+        : 'Sin alojamiento en sede'
+    : '';
+
+  return (
+    <Modal title="Credencial QR" open={Boolean(participant)} onCancel={onCancel} footer={null} width={440} destroyOnClose>
+      {participant && (
+        <div className="admin-qr-modal">
+          <Avatar size={56} style={{ background: '#1E3A8A' }}>
+            {participantInitials(participant)}
+          </Avatar>
+          <Title level={4} style={{ margin: '12px 0 4px', color: '#00236F' }}>
+            {participantFullName(participant)}
+          </Title>
+          <Space size={6} wrap style={{ justifyContent: 'center' }}>
+            <Tag color={TYPE_COLORS[participant.tipo]}>{TYPE_LABELS[participant.tipo]}</Tag>
+            <Tag color={STATE_COLORS[participant.estado]}>{STATE_LABELS[participant.estado]}</Tag>
+          </Space>
+          <Text type="secondary" style={{ display: 'block', marginTop: 8 }}>
+            {participant.documentoId} · {participant.organizacionComunidad}
+          </Text>
+          <Text type="secondary" style={{ display: 'block' }}>
+            {lodging}
+          </Text>
+          <div className="admin-qr-box">
+            <QRCode value={participant.publicToken} size={220} color="#00236F" bordered={false} />
+          </div>
+          <Text type="secondary" style={{ fontSize: 12 }}>
+            Presentar este código en la puerta de acreditación.
+          </Text>
+        </div>
+      )}
+    </Modal>
   );
 };
 

@@ -610,6 +610,19 @@ a {
   font-size: 13px;
 }
 
+.admin-qr-modal {
+  text-align: center;
+}
+
+.admin-qr-box {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 12px;
+  padding: 16px;
+  background: #f8f9ff;
+  border-radius: 16px;
+}
+
 .login-page {
   min-height: 100vh;
   display: flex;
