@@ -6,6 +6,7 @@ import logo from '../assets/logo.svg';
 
 const items = [
   { key: '/', label: 'Inicio', to: '/' },
+  { key: '/registro', label: 'Registro', to: '/registro' },
   { key: '/cronograma', label: 'Cronograma', to: '/cronograma' },
   { key: '/ponentes', label: 'Ponentes', to: '/ponentes' },
   { key: '/vivo', label: 'Transmisión en Vivo', to: '/vivo' },

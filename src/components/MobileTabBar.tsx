@@ -30,7 +30,7 @@ const MobileTabBar = () => {
     >
       <Menu
         mode="horizontal"
-        selectedKeys={[pathname.startsWith('/escaner') ? '/pase' : pathname]}
+        selectedKeys={[pathname.startsWith('/pase') ? '/pase' : pathname]}
         items={items}
         onClick={({ key }) => navigate(key)}
         style={{ justifyContent: 'space-around', border: 'none' }}

@@ -6,6 +6,7 @@ import {
   BarChartOutlined,
   SettingOutlined,
   TeamOutlined,
+  ScanOutlined,
   BellOutlined,
   LogoutOutlined,
   UserOutlined,
@@ -17,22 +18,44 @@ import logo from '../assets/logo.svg';
 
 const { Sider, Header, Content } = Layout;
 
-const items = [
-  { key: '/admin', icon: <IdcardOutlined />, label: <Link to="/admin">Acreditación</Link> },
-  { key: '/admin/usuarios', icon: <UserOutlined />, label: <Link to="/admin/usuarios">Usuarios</Link> },
-  { key: '/admin/alojamientos', icon: <HomeOutlined />, label: <Link to="/admin/alojamientos">Alojamientos</Link> },
-  { key: '/admin/finanzas', icon: <WalletOutlined />, label: <Link to="/admin/finanzas">Finanzas</Link> },
-  { key: '/admin/reportes', icon: <BarChartOutlined />, label: <Link to="/admin/reportes">Reportes</Link> },
-  { type: 'divider' as const },
-  { key: '/admin/ajustes', icon: <SettingOutlined />, label: <Link to="/admin/ajustes">Ajustes Generales</Link> },
-  { key: '/admin/delegaciones', icon: <TeamOutlined />, label: <Link to="/admin/delegaciones">Delegaciones</Link> },
-];
-
 const AdminLayout = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin, canScan } = useAuth();
   const logoutMutation = useLogout();
+
+  const items = [
+    { key: '/admin', icon: <IdcardOutlined />, label: <Link to="/admin">Acreditación</Link> },
+    {
+      key: '/admin/participantes',
+      icon: <TeamOutlined />,
+      label: <Link to="/admin/participantes">Participantes</Link>,
+    },
+    ...(isAdmin
+      ? [
+          {
+            key: '/admin/usuarios',
+            icon: <UserOutlined />,
+            label: <Link to="/admin/usuarios">Usuarios</Link>,
+          },
+        ]
+      : []),
+    ...(canScan
+      ? [
+          {
+            key: '/escaner',
+            icon: <ScanOutlined />,
+            label: <Link to="/escaner">Escáner</Link>,
+          },
+        ]
+      : []),
+    { key: '/admin/alojamientos', icon: <HomeOutlined />, label: <Link to="/admin/alojamientos">Alojamientos</Link> },
+    { key: '/admin/finanzas', icon: <WalletOutlined />, label: <Link to="/admin/finanzas">Finanzas</Link> },
+    { key: '/admin/reportes', icon: <BarChartOutlined />, label: <Link to="/admin/reportes">Reportes</Link> },
+    { type: 'divider' as const },
+    { key: '/admin/ajustes', icon: <SettingOutlined />, label: <Link to="/admin/ajustes">Ajustes Generales</Link> },
+    { key: '/admin/delegaciones', icon: <TeamOutlined />, label: <Link to="/admin/delegaciones">Delegaciones</Link> },
+  ];
 
   const displayName = [user?.name, user?.lastName].filter(Boolean).join(' ') || 'Administración CEV';
   const initials = (user?.name?.[0] || 'A') + (user?.lastName?.[0] || '');

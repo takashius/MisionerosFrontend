@@ -1,6 +1,13 @@
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
 import { AuthContext } from './AuthContextInstance';
-import { isAdminRole, type AuthUser, type LoginResponse } from '@app-types/auth';
+import {
+  isAdminRole,
+  isPaymentRole,
+  isScanRole,
+  isStaffRole,
+  type AuthUser,
+  type LoginResponse,
+} from '@app-types/auth';
 
 const readUser = (): AuthUser | null => {
   const raw = localStorage.getItem('UserData');
@@ -44,16 +51,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('Roles');
   }, []);
 
-  const value = useMemo(
-    () => ({
+  const value = useMemo(() => {
+    const roles = user?.role ?? readRoles();
+    return {
       user,
       token,
-      isAdmin: isAdminRole(user?.role ?? readRoles()),
+      isAdmin: isAdminRole(roles),
+      isStaff: isStaffRole(roles),
+      canConfirmPayment: isPaymentRole(roles),
+      canScan: isScanRole(roles),
       login,
       logout,
-    }),
-    [user, token, login, logout]
-  );
+    };
+  }, [user, token, login, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

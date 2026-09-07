@@ -39,6 +39,8 @@ const { Title, Paragraph } = Typography;
 const roleColor: Record<UserRoleName, string> = {
   SUPER_ADMIN: 'purple',
   ADMIN: 'geekblue',
+  COORDINADOR: 'cyan',
+  LOGISTICA: 'gold',
   MISIONERO: 'blue',
   PARTICIPANTE: 'default',
 };

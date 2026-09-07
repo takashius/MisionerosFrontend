@@ -7,9 +7,9 @@ import logo from '../assets/logo.svg';
 const { Title, Paragraph } = Typography;
 
 const Login = () => {
-  const { isAdmin } = useAuth();
+  const { isStaff } = useAuth();
 
-  if (isAdmin) {
+  if (isStaff) {
     return <Navigate to="/admin" replace />;
   }
 
@@ -22,7 +22,7 @@ const Login = () => {
         </Title>
         <Paragraph type="secondary">
           Acceso restringido al panel de acreditación de la I Asamblea de
-          Misioneros Digitales. Solo cuentas ADMIN o SUPER_ADMIN.
+          Misioneros Digitales. Cuentas de administración, coordinación o logística.
         </Paragraph>
         <AdminLoginForm />
         <div style={{ marginTop: 8 }}>

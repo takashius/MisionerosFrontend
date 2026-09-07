@@ -1,8 +1,16 @@
-export type UserRoleName = 'SUPER_ADMIN' | 'ADMIN' | 'MISIONERO' | 'PARTICIPANTE';
+export type UserRoleName =
+  | 'SUPER_ADMIN'
+  | 'ADMIN'
+  | 'COORDINADOR'
+  | 'LOGISTICA'
+  | 'MISIONERO'
+  | 'PARTICIPANTE';
 
 export const ROLE_LABELS: Record<UserRoleName, string> = {
   SUPER_ADMIN: 'Super admin',
   ADMIN: 'Administrador',
+  COORDINADOR: 'Coordinador',
+  LOGISTICA: 'Logística',
   MISIONERO: 'Misionero',
   PARTICIPANTE: 'Participante',
 };

@@ -411,6 +411,29 @@ a {
   background: var(--surface);
 }
 
+.registro-page {
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 24px 0 48px;
+}
+
+#qr-reader,
+#qr-reader video,
+#qr-reader canvas {
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+}
+
+#qr-reader {
+  position: absolute;
+  inset: 0;
+}
+
+#qr-reader img {
+  display: none;
+}
+
 .login-page {
   min-height: 100vh;
   display: flex;

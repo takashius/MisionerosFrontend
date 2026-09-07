@@ -1,0 +1,446 @@
+import { useState } from 'react';
+import {
+  App,
+  Avatar,
+  Breadcrumb,
+  Button,
+  Card,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Select,
+  Space,
+  Table,
+  Tag,
+  Typography,
+} from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import {
+  CheckCircleOutlined,
+  EditOutlined,
+  HomeOutlined,
+  QrcodeOutlined,
+} from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+import {
+  useConfirmPayment,
+  useFixTypo,
+  useParticipantList,
+  useUpdateLodging,
+  useUpdateParticipantStatus,
+} from '@api/participants';
+import { useAuth } from '@context/useAuth';
+import { wasErrorToastShown } from '@utils/apiAuthError';
+import { getApiErrorMessage } from '@utils/getApiErrorMessage';
+import {
+  BADGE_STATES,
+  PARTICIPANT_STATES,
+  PARTICIPANT_TYPES,
+  STATE_COLORS,
+  STATE_LABELS,
+  TYPE_COLORS,
+  TYPE_LABELS,
+  participantFullName,
+  participantInitials,
+  type FixTypoPayload,
+  type Participant,
+  type ParticipantState,
+  type ParticipantType,
+} from '@app-types/participants';
+
+const { Title, Paragraph, Text } = Typography;
+
+const Participantes = () => {
+  const { message } = App.useApp();
+  const { canConfirmPayment, canScan } = useAuth();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [estado, setEstado] = useState<ParticipantState | ''>('');
+  const [tipo, setTipo] = useState<ParticipantType | ''>('');
+  const [paying, setPaying] = useState<Participant | null>(null);
+  const [editing, setEditing] = useState<Participant | null>(null);
+  const [lodging, setLodging] = useState<Participant | null>(null);
+
+  const list = useParticipantList({ page, search, estado, tipo });
+  const confirmPayment = useConfirmPayment();
+  const fixTypo = useFixTypo();
+  const updateStatus = useUpdateParticipantStatus();
+  const updateLodging = useUpdateLodging();
+
+  const showError = (error: unknown, fallback: string) => {
+    if (wasErrorToastShown(error)) return;
+    message.error(getApiErrorMessage(error, fallback));
+  };
+
+  const columns: ColumnsType<Participant> = [
+    {
+      title: 'Documento',
+      dataIndex: 'documentoId',
+      render: (value: string) => <Text code>{value}</Text>,
+    },
+    {
+      title: 'Participante',
+      render: (_, row) => (
+        <Space>
+          <Avatar style={{ background: '#1E3A8A' }}>{participantInitials(row)}</Avatar>
+          <span>
+            <Text strong>{participantFullName(row)}</Text>
+            <br />
+            <Text type="secondary">
+              {row.organizacionComunidad} • {row.ciudad}
+            </Text>
+          </span>
+        </Space>
+      ),
+    },
+    {
+      title: 'Tipo',
+      dataIndex: 'tipo',
+      render: (value: ParticipantType) => <Tag color={TYPE_COLORS[value]}>{TYPE_LABELS[value]}</Tag>,
+    },
+    {
+      title: 'WhatsApp',
+      dataIndex: 'whatsapp',
+    },
+    {
+      title: 'Alojamiento',
+      render: (_, row) =>
+        row.habitacionAsignada || (row.requiereAlojamiento ? 'Por asignar' : 'Externo'),
+    },
+    {
+      title: 'Estado',
+      dataIndex: 'estado',
+      render: (value: ParticipantState) => <Tag color={STATE_COLORS[value]}>{STATE_LABELS[value]}</Tag>,
+    },
+    {
+      title: 'Acciones',
+      align: 'right',
+      render: (_, row) => (
+        <Space wrap>
+          {canConfirmPayment && row.estado === 'registrado' && (
+            <Button size="small" type="primary" onClick={() => setPaying(row)}>
+              Confirmar pago
+            </Button>
+          )}
+          {canScan && (
+            <Button size="small" icon={<EditOutlined />} onClick={() => setEditing(row)}>
+              Tipografía
+            </Button>
+          )}
+          <Button size="small" icon={<HomeOutlined />} onClick={() => setLodging(row)}>
+            Habitación
+          </Button>
+          {BADGE_STATES.includes(row.estado) && (
+            <Link to={`/pase/${row.publicToken}`}>
+              <Button size="small" icon={<QrcodeOutlined />}>
+                Ver QR
+              </Button>
+            </Link>
+          )}
+          {canConfirmPayment && row.estado === 'registrado' && (
+            <Popconfirm
+              title="Marcar como no asistirá"
+              okText="Confirmar"
+              onConfirm={() =>
+                updateStatus.mutate(
+                  { id: row._id, estado: 'no_asistira' },
+                  {
+                    onSuccess: () => message.success('Estado actualizado'),
+                    onError: (error) => showError(error, 'No se pudo actualizar el estado'),
+                  }
+                )
+              }
+            >
+              <Button size="small">No asistirá</Button>
+            </Popconfirm>
+          )}
+        </Space>
+      ),
+    },
+  ];
+
+  return (
+    <div>
+      <Breadcrumb
+        items={[{ title: 'Inicio' }, { title: 'Gestión CEV' }, { title: 'Participantes' }]}
+        style={{ marginBottom: 8 }}
+      />
+      <Space style={{ width: '100%', justifyContent: 'space-between', marginBottom: 16 }} wrap>
+        <div>
+          <Title level={2} style={{ margin: 0, color: '#00236F' }}>
+            Participantes
+          </Title>
+          <Paragraph type="secondary" style={{ marginBottom: 0 }}>
+            Confirmación de pago, corrección tipográfica y seguimiento de acreditación.
+          </Paragraph>
+        </div>
+        <Link to="/registro">
+          <Button type="primary">Nuevo registro público</Button>
+        </Link>
+      </Space>
+
+      <Card>
+        <Space wrap style={{ marginBottom: 16 }}>
+          <Input.Search
+            allowClear
+            placeholder="Buscar por nombre, cédula o comunidad"
+            onSearch={(value) => {
+              setPage(1);
+              setSearch(value);
+            }}
+            style={{ width: 280 }}
+          />
+          <Select
+            allowClear
+            placeholder="Estado"
+            style={{ width: 200 }}
+            value={estado || undefined}
+            onChange={(value) => {
+              setPage(1);
+              setEstado(value ?? '');
+            }}
+            options={PARTICIPANT_STATES.map((item) => ({
+              value: item,
+              label: STATE_LABELS[item],
+            }))}
+          />
+          <Select
+            allowClear
+            placeholder="Tipo"
+            style={{ width: 200 }}
+            value={tipo || undefined}
+            onChange={(value) => {
+              setPage(1);
+              setTipo(value ?? '');
+            }}
+            options={PARTICIPANT_TYPES.map((item) => ({
+              value: item,
+              label: TYPE_LABELS[item],
+            }))}
+          />
+        </Space>
+        <Table
+          rowKey="_id"
+          columns={columns}
+          dataSource={list.data?.results ?? []}
+          loading={list.isFetching}
+          scroll={{ x: 1100 }}
+          pagination={{
+            current: list.data?.currentPage || page,
+            total: list.data?.total || 0,
+            pageSize: 10,
+            onChange: setPage,
+            showTotal: (total) => `${total} participantes`,
+          }}
+        />
+      </Card>
+
+      <PaymentModal
+        participant={paying}
+        loading={confirmPayment.isPending}
+        onCancel={() => setPaying(null)}
+        onSubmit={(referenciaComprobante) => {
+          if (!paying) return;
+          confirmPayment.mutate(
+            { id: paying._id, referenciaComprobante },
+            {
+              onSuccess: () => {
+                message.success('Pago confirmado. El QR se envía por correo.');
+                setPaying(null);
+              },
+              onError: (error) => showError(error, 'No se pudo confirmar el pago'),
+            }
+          );
+        }}
+      />
+
+      <TypoModal
+        participant={editing}
+        loading={fixTypo.isPending}
+        onCancel={() => setEditing(null)}
+        onSubmit={(values) => {
+          if (!editing) return;
+          fixTypo.mutate(
+            { id: editing._id, ...values },
+            {
+              onSuccess: () => {
+                message.success('Datos tipográficos actualizados');
+                setEditing(null);
+              },
+              onError: (error) => showError(error, 'No se pudo corregir'),
+            }
+          );
+        }}
+      />
+
+      <LodgingModal
+        participant={lodging}
+        loading={updateLodging.isPending}
+        onCancel={() => setLodging(null)}
+        onSubmit={(habitacionAsignada) => {
+          if (!lodging) return;
+          updateLodging.mutate(
+            { id: lodging._id, habitacionAsignada },
+            {
+              onSuccess: () => {
+                message.success('Habitación actualizada');
+                setLodging(null);
+              },
+              onError: (error) => showError(error, 'No se pudo asignar la habitación'),
+            }
+          );
+        }}
+      />
+    </div>
+  );
+};
+
+const PaymentModal = ({
+  participant,
+  loading,
+  onCancel,
+  onSubmit,
+}: {
+  participant: Participant | null;
+  loading: boolean;
+  onCancel: () => void;
+  onSubmit: (referencia: string) => void;
+}) => {
+  const [form] = Form.useForm<{ referenciaComprobante: string }>();
+
+  return (
+    <Modal
+      title="Confirmar pago y enviar QR"
+      open={Boolean(participant)}
+      onCancel={onCancel}
+      confirmLoading={loading}
+      onOk={() => form.submit()}
+      okText="Confirmar y enviar QR"
+      destroyOnClose
+    >
+      {participant && (
+        <Paragraph>
+          {participantFullName(participant)} · {participant.documentoId}
+        </Paragraph>
+      )}
+      <Form form={form} layout="vertical" onFinish={(values) => onSubmit(values.referenciaComprobante)}>
+        <Form.Item
+          name="referenciaComprobante"
+          label="Referencia del comprobante"
+          rules={[{ required: true, message: 'Indica la referencia' }]}
+        >
+          <Input placeholder="Pago móvil, transferencia o recibo" />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+
+const TypoModal = ({
+  participant,
+  loading,
+  onCancel,
+  onSubmit,
+}: {
+  participant: Participant | null;
+  loading: boolean;
+  onCancel: () => void;
+  onSubmit: (values: FixTypoPayload) => void;
+}) => {
+  const [form] = Form.useForm<FixTypoPayload>();
+
+  return (
+    <Modal
+      title="Corrección tipográfica"
+      open={Boolean(participant)}
+      onCancel={onCancel}
+      confirmLoading={loading}
+      onOk={() => form.submit()}
+      okText="Guardar"
+      destroyOnClose
+      afterOpenChange={(open) => {
+        if (open && participant) {
+          form.setFieldsValue({
+            nombres: participant.nombres,
+            apellidos: participant.apellidos,
+            email: participant.email,
+            whatsapp: participant.whatsapp,
+            ciudad: participant.ciudad,
+            organizacionComunidad: participant.organizacionComunidad,
+          });
+        }
+      }}
+    >
+      {participant && (
+        <Paragraph type="secondary">
+          Documento {participant.documentoId} (no editable). El token y el tipo de asistente tampoco
+          se modifican aquí.
+        </Paragraph>
+      )}
+      <Form form={form} layout="vertical" onFinish={onSubmit}>
+        <Form.Item name="nombres" label="Nombres" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="apellidos" label="Apellidos" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="email" label="Correo" rules={[{ required: true, type: 'email' }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="whatsapp" label="WhatsApp" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="ciudad" label="Ciudad" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="organizacionComunidad" label="Organización o comunidad" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+
+const LodgingModal = ({
+  participant,
+  loading,
+  onCancel,
+  onSubmit,
+}: {
+  participant: Participant | null;
+  loading: boolean;
+  onCancel: () => void;
+  onSubmit: (value: string | null) => void;
+}) => {
+  const [form] = Form.useForm<{ habitacionAsignada?: string }>();
+
+  return (
+    <Modal
+      title="Asignar habitación"
+      open={Boolean(participant)}
+      onCancel={onCancel}
+      confirmLoading={loading}
+      onOk={() => form.submit()}
+      okText="Guardar"
+      destroyOnClose
+      afterOpenChange={(open) => {
+        if (open && participant) {
+          form.setFieldsValue({ habitacionAsignada: participant.habitacionAsignada ?? '' });
+        }
+      }}
+    >
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={(values) => onSubmit(values.habitacionAsignada?.trim() || null)}
+      >
+        <Form.Item name="habitacionAsignada" label="Habitación">
+          <Input placeholder="CEV Bloque A - Hab. 04" prefix={<CheckCircleOutlined />} />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+
+export default Participantes;

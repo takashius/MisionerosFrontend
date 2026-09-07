@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  App,
   Button,
   Card,
   Col,
@@ -30,6 +31,9 @@ import {
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@context/useAuth';
+import { useLookupParticipant } from '@api/participants';
+import { wasErrorToastShown } from '@utils/apiAuthError';
+import { getApiErrorMessage } from '@utils/getApiErrorMessage';
 import AdminLoginForm from '@components/AdminLoginForm';
 import logo from '../assets/logo.svg';
 
@@ -37,12 +41,27 @@ const { Title, Paragraph, Text } = Typography;
 
 const Portal = () => {
   const navigate = useNavigate();
-  const { isAdmin } = useAuth();
+  const { message } = App.useApp();
+  const { isStaff } = useAuth();
   const screens = Grid.useBreakpoint();
   const [helpOpen, setHelpOpen] = useState(false);
+  const lookup = useLookupParticipant();
 
   const onAttendee = ({ cedula }: { cedula: string }) => {
-    navigate(`/pase?cedula=${encodeURIComponent(cedula.trim())}`);
+    lookup.mutate(cedula.trim(), {
+      onSuccess: (badge) => {
+        navigate(`/pase/${badge.publicToken}`);
+      },
+      onError: (error) => {
+        if (wasErrorToastShown(error)) return;
+        message.error(
+          getApiErrorMessage(
+            error,
+            'No encontramos una credencial confirmada con ese documento.'
+          )
+        );
+      },
+    });
   };
 
   return (
@@ -67,10 +86,10 @@ const Portal = () => {
                 <TeamOutlined />
               </span>
               <span>
-                <Text strong>65 / 80 Plazas</Text>{' '}
-                <Tag color="processing">81% Lleno</Tag>
+                <Text strong>Hasta 80 plazas</Text>{' '}
+                <Tag color="processing">Aforo limitado</Tag>
                 <br />
-                <Text type="secondary">Cupos de hospedaje asignados</Text>
+                <Text type="secondary">60 cupos estimados de hospedaje</Text>
               </span>
             </Space>
           </Col>
@@ -135,12 +154,25 @@ const Portal = () => {
                   placeholder="ej. V-19482109"
                 />
               </Form.Item>
-              <Button type="primary" htmlType="submit" block icon={<QrcodeOutlined />}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                icon={<QrcodeOutlined />}
+                loading={lookup.isPending}
+              >
                 Ver Mi Credencial
               </Button>
             </Form>
+            <Button
+              block
+              style={{ marginTop: 8 }}
+              onClick={() => navigate('/registro')}
+            >
+              Inscribirme a la asamblea
+            </Button>
             <Text type="secondary" style={{ display: 'block', marginTop: 16, fontSize: 12 }}>
-              Válido para las 24 diócesis y vicariatos.
+              El pase solo aparece cuando el pago ya fue confirmado.
             </Text>
           </Card>
         </Col>
@@ -209,7 +241,7 @@ const Portal = () => {
               Administración de comisiones, balances de aportes eclesiásticos,
               asignación de hospedajes, salas temáticas y reportes para obispos.
             </Paragraph>
-            {isAdmin ? (
+            {isStaff ? (
               <Button type="primary" block onClick={() => navigate('/admin')}>
                 Ir al Dashboard
               </Button>

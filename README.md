@@ -2,7 +2,7 @@
 
 Portal de la **I Asamblea de Misioneros Digitales**. React 18 + Vite 6 + Ant Design 5 + TanStack Query + Axios (`ERDEAxios`).
 
-El **portal** (`/`) es la pantalla pública. Desde ahí se entra al pase, al escáner o al panel CEV.
+El **portal** (`/`) es la pantalla pública. Desde ahí se entra al registro, al pase (si el pago ya está confirmado), al escáner (personal de logística) o al panel CEV.
 
 ## Requisitos
 
@@ -40,40 +40,45 @@ La app queda en `http://localhost:3050`.
 
 | Ruta | Quién |
 |---|---|
-| `/` | Portal público (info, cédula, login CEV) |
-| `/pase` | Credencial digital (cualquier cédula, sin validar aún) |
-| `/escaner` | Check-in de puerta |
-| `/login` | Login del panel CEV |
+| `/` | Portal público |
+| `/registro` | Inscripción pública (aforo máximo 80) |
+| `/pase/:token` | Credencial digital con QR (solo si el pago está confirmado) |
+| `/escaner` | Check-in / check-out. Requiere `LOGISTICA`, `ADMIN` o `SUPER_ADMIN` |
+| `/login` | Login del personal CEV |
 | `/recuperar` | Olvidé mi contraseña (pide código al correo) |
 | `/recuperar/codigo` | Código + nueva clave |
-| `/admin` | Dashboard. Solo `ADMIN` / `SUPER_ADMIN` |
-| `/admin/usuarios` | CRUD de usuarios y cambio de clave aparte |
+| `/admin` | Dashboard con KPIs. Staff (`ADMIN`, `COORDINADOR`, `LOGISTICA`, `SUPER_ADMIN`) |
+| `/admin/participantes` | Listado, confirmar pago, corrección tipográfica |
+| `/admin/usuarios` | CRUD de usuarios. Solo `ADMIN` / `SUPER_ADMIN` |
 
 Cronograma, ponentes, mapa, etc. son placeholders.
 
-## Login administrativo
+## Login de personal
 
-El login **solo** abre el panel (`/admin`). El pase y el escáner no piden cuenta.
+El login abre el panel (`/admin`). El escáner también exige sesión de staff con permiso de logística.
 
 1. Arranca MongoDB y el backend (`npm run dev` en `backend`).
 2. El seed crea `USER_ADMIN_EMAIL` / `USER_ADMIN_PASSWORD` (por defecto `admin@misioneros.local` / `cambia-esta-clave`).
-3. En el portal, tarjeta **Gestión CEV**, o en `/login`, entra con ese correo.
-4. **Olvidé mi contraseña** pide un código por correo (Mailjet). Si el correo no está configurado, el código no llega; en desarrollo revisa los logs del backend.
+3. En **Usuarios** se pueden crear cuentas `COORDINADOR` (confirmar pagos) y `LOGISTICA` (escáner y tipografía).
+4. **Olvidé mi contraseña** pide un código por correo (Mailjet).
 
-Si las credenciales no son de un admin, el API puede responder 200 pero el frontend no deja pasar al dashboard.
+El JWT se guarda en `localStorage` (`Token`). Un 401 fuera de rutas públicas limpia la sesión y redirige a `/login`.
 
-El JWT se guarda en `localStorage` (`Token`). Un 401 fuera de `/user/login` y `/user/recovery` limpia la sesión y redirige a `/login`.
+## Flujo de acreditación
 
-En **Usuarios** se dan de alta, editan y eliminan cuentas. La contraseña inicial se pide al crear; el cambio posterior es el botón **Cambiar clave**, no el formulario de editar.
+1. El asistente se inscribe en `/registro` (estado `registrado`).
+2. Coordinación confirma el pago en `/admin/participantes` y Mailjet envía el enlace `/pase/:token`.
+3. El asistente consulta su cédula en el portal o abre el correo.
+4. Logística escanea el QR en `/escaner` (check-in / check-out).
 
 ## Estructura
 
 ```
 src/
-  api/           # ERDEAxios, login
-  context/       # sesión admin
-  pages/         # Portal, Pase, Escáner, Admin, Login
+  api/           # ERDEAxios, usuarios, participantes, escaneos
+  context/       # sesión de staff
+  pages/         # Portal, Registro, Pase, Escáner, Admin
   layouts/
   components/
-  data/          # participantes de demostración
+  types/
 ```

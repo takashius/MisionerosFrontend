@@ -4,14 +4,18 @@ import PortalLayout from '@layouts/PortalLayout';
 import MobileLayout from '@layouts/MobileLayout';
 import AdminLayout from '@layouts/AdminLayout';
 import Portal from '@pages/Portal';
+import Registro from '@pages/Registro';
 import Pase from '@pages/Pase';
 import Escaner from '@pages/Escaner';
 import Admin from '@pages/Admin';
+import Participantes from '@pages/admin/Participantes';
 import Login from '@pages/Login';
 import RecoverPassword from '@pages/RecoverPassword';
 import RecoveryStep2 from '@pages/RecoveryStep2';
 import Users from '@pages/users/Users';
 import RequireAdmin from '@components/RequireAdmin';
+import RequireAdminOnly from '@components/RequireAdminOnly';
+import RequireScan from '@components/RequireScan';
 import InfoPage from '@pages/InfoPage';
 
 const App = () => (
@@ -19,6 +23,7 @@ const App = () => (
     <Routes>
       <Route element={<PortalLayout />}>
         <Route path="/" element={<Portal />} />
+        <Route path="/registro" element={<Registro />} />
         <Route
           path="/cronograma"
           element={
@@ -68,7 +73,7 @@ const App = () => (
 
       <Route element={<MobileLayout />}>
         <Route path="/pase" element={<Pase />} />
-        <Route path="/escaner" element={<Escaner />} />
+        <Route path="/pase/:token" element={<Pase />} />
         <Route
           path="/programa"
           element={
@@ -98,10 +103,24 @@ const App = () => (
         />
       </Route>
 
+      <Route element={<RequireScan />}>
+        <Route element={<MobileLayout />}>
+          <Route path="/escaner" element={<Escaner />} />
+        </Route>
+      </Route>
+
       <Route element={<RequireAdmin />}>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Admin />} />
-          <Route path="usuarios" element={<Users />} />
+          <Route path="participantes" element={<Participantes />} />
+          <Route
+            path="usuarios"
+            element={
+              <RequireAdminOnly>
+                <Users />
+              </RequireAdminOnly>
+            }
+          />
           <Route
             path="alojamientos"
             element={

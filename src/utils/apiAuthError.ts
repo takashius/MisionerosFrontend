@@ -109,7 +109,12 @@ export const markCompanyInactiveInStorage = (): void => {
 export const isPublicAuthRequestUrl = (url: string | undefined): boolean => {
   if (!url) return false;
   return (
-    url.includes('/user/login') || url.includes('/user/recovery') || url.includes('/user/register')
+    url.includes('/user/login') ||
+    url.includes('/user/recovery') ||
+    url.includes('/user/register') ||
+    url.includes('/participant/register') ||
+    url.includes('/participant/lookup/') ||
+    url.includes('/participant/by-token/')
   );
 };
 
