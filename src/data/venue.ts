@@ -8,3 +8,6 @@ export const VENUE = {
 
 export const venueMapsUrl = () =>
   `https://www.google.com/maps/search/?api=1&query=${VENUE.lat},${VENUE.lng}`;
+
+export const venueEmbedUrl = () =>
+  `https://maps.google.com/maps?q=${VENUE.lat},${VENUE.lng}&hl=es&z=16&output=embed`;

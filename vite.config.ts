@@ -8,6 +8,18 @@ const apiProxy = {
   changeOrigin: true,
 };
 
+/** Evita que `/contact` intercepte la página `/contacto`. */
+const contactProxy = {
+  ...apiProxy,
+  bypass(req: { url?: string }) {
+    const path = (req.url || '').split('?')[0];
+    if (path === '/contact' || path.startsWith('/contact/')) {
+      return undefined;
+    }
+    return req.url;
+  },
+};
+
 export default defineConfig({
   plugins: [react(), basicSsl()],
   server: {
@@ -19,6 +31,7 @@ export default defineConfig({
       '/participant': apiProxy,
       '/scan': apiProxy,
       '/schedule': apiProxy,
+      '/contact': contactProxy,
       '/active-response': apiProxy,
     },
   },

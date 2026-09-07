@@ -115,7 +115,8 @@ export const isPublicAuthRequestUrl = (url: string | undefined): boolean => {
     url.includes('/participant/register') ||
     url.includes('/participant/lookup/') ||
     url.includes('/participant/by-token/') ||
-    /\/schedule\/?(\?|$)/.test(url)
+    /\/schedule\/?(\?|$)/.test(url) ||
+    /\/contact\/?(\?|$)/.test(url)
   );
 };
 

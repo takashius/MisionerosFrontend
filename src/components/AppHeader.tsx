@@ -8,10 +8,7 @@ const items = [
   { key: '/', label: 'Inicio', to: '/' },
   { key: '/registro', label: 'Registro', to: '/registro' },
   { key: '/cronograma', label: 'Cronograma', to: '/cronograma' },
-  { key: '/ponentes', label: 'Ponentes', to: '/ponentes' },
-  { key: '/vivo', label: 'Transmisión en Vivo', to: '/vivo' },
-  { key: '/ayuda', label: 'Ayuda / Soporte', to: '/ayuda' },
-  { key: '/contacto', label: 'Contacto CEV', to: '/contacto' },
+  { key: '/contacto', label: 'Contacto', to: '/contacto' },
 ];
 
 const AppHeader = () => {

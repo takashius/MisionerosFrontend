@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import PortalLayout from '@layouts/PortalLayout';
 import MobileLayout from '@layouts/MobileLayout';
 import AdminLayout from '@layouts/AdminLayout';
@@ -16,11 +16,11 @@ import Users from '@pages/users/Users';
 import RequireAdmin from '@components/RequireAdmin';
 import RequireAdminOnly from '@components/RequireAdminOnly';
 import RequireScan from '@components/RequireScan';
-import InfoPage from '@pages/InfoPage';
 import Cronograma from '@pages/Cronograma';
 import CronogramaAdmin from '@pages/admin/CronogramaAdmin';
 import Perfil from '@pages/Perfil';
 import Mapa from '@pages/Mapa';
+import Contacto from '@pages/Contacto';
 
 const App = () => (
   <Layout style={{ minHeight: '100vh', background: '#F8F9FF' }}>
@@ -29,42 +29,10 @@ const App = () => (
         <Route path="/" element={<Portal />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/cronograma" element={<Cronograma />} />
-        <Route
-          path="/ponentes"
-          element={
-            <InfoPage
-              title="Ponentes"
-              description="Voces de la misión digital en las 24 diócesis y vicariatos."
-            />
-          }
-        />
-        <Route
-          path="/vivo"
-          element={
-            <InfoPage
-              title="Transmisión en Vivo"
-              description="Señal oficial de la asamblea para quienes siguen desde sus diócesis."
-            />
-          }
-        />
-        <Route
-          path="/ayuda"
-          element={
-            <InfoPage
-              title="Ayuda / Soporte"
-              description="Acreditación, hospedaje y mesa técnica pastoral."
-            />
-          }
-        />
-        <Route
-          path="/contacto"
-          element={
-            <InfoPage
-              title="Contacto CEV"
-              description="Conferencia Episcopal Venezolana · Sede Montalbán."
-            />
-          }
-        />
+        <Route path="/contacto" element={<Contacto />} />
+        <Route path="/ponentes" element={<Navigate to="/" replace />} />
+        <Route path="/vivo" element={<Navigate to="/" replace />} />
+        <Route path="/ayuda" element={<Navigate to="/" replace />} />
       </Route>
 
       <Route element={<MobileLayout />}>
