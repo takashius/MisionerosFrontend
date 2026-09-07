@@ -12,8 +12,15 @@
   box-sizing: border-box;
 }
 
-body {
+html,
+body,
+#root {
   margin: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
   min-height: 100vh;
   background: var(--surface);
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
@@ -28,28 +35,39 @@ a {
   position: sticky;
   top: 0;
   z-index: 50;
-  height: 80px;
+  min-height: 72px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 0 32px;
+  gap: 12px;
+  padding: 10px 16px;
+  overflow: hidden;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(16px);
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
 }
 
+.portal-header-title {
+  color: #1e3a8a;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .portal-page,
 .info-page {
-  max-width: 1280px;
+  max-width: min(1280px, 100%);
   margin: 0 auto;
-  padding: 32px 24px 64px;
+  padding: 24px 16px 64px;
+  overflow-x: hidden;
 }
 
 .portal-hero {
   position: relative;
   text-align: center;
-  padding: 24px 0 8px;
+  padding: 16px 0 8px;
+  overflow: hidden;
 }
 
 .portal-hero::before {
@@ -58,7 +76,7 @@ a {
   top: -80px;
   left: 50%;
   transform: translateX(-50%);
-  width: 700px;
+  width: min(700px, 140%);
   height: 280px;
   background: radial-gradient(circle, rgba(37, 99, 235, 0.12), transparent 70%);
   pointer-events: none;
@@ -83,9 +101,19 @@ a {
   box-shadow: 0 8px 24px rgba(30, 58, 138, 0.2);
 }
 
-.hero-pill {
+.hero-pill.ant-tag {
+  max-width: 100%;
+  height: auto !important;
+  white-space: normal !important;
+  display: inline-flex !important;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 2px 8px;
   border-radius: 999px !important;
-  padding: 6px 14px !important;
+  padding: 8px 14px !important;
+  line-height: 1.35;
+  text-align: center;
 }
 
 .metrics-bar {
@@ -223,7 +251,9 @@ a {
 .mobile-shell {
   min-height: 100vh;
   max-width: 480px;
+  width: 100%;
   margin: 0 auto;
+  overflow-x: hidden;
   background: var(--surface);
 }
 
@@ -235,14 +265,121 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
+  gap: 8px;
+  padding: 0 12px;
   background: rgba(248, 249, 255, 0.92);
   backdrop-filter: blur(16px);
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
 }
 
+.mobile-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.mobile-header-copy {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.mobile-header-copy strong {
+  color: #00236f;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobile-header-copy span {
+  color: #2563eb;
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.mobile-header-avatar {
+  flex: 0 0 auto;
+  padding: 0 !important;
+  height: auto !important;
+  width: auto !important;
+}
+
 .mobile-content {
   padding: 16px 16px 24px;
+  overflow-x: hidden;
+}
+
+.mobile-shell.has-tabbar .mobile-content {
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+}
+
+.mobile-content .info-page {
+  max-width: none;
+  padding: 0 0 16px;
+}
+
+.mobile-tabbar {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  z-index: 40;
+  display: flex;
+  width: 100%;
+  max-width: 480px;
+  transform: translateX(-50%);
+  overflow: hidden;
+  background: #fff;
+  border-top: 1px solid #e2e8f0;
+  box-shadow: 0 -4px 16px rgba(11, 28, 48, 0.06);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.mobile-tabbar-item {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 2px 10px;
+  border: 0;
+  background: transparent;
+  color: #64748b;
+  font-size: 11px;
+  line-height: 1.15;
+}
+
+.mobile-tabbar-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.mobile-tabbar-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobile-tabbar-item.is-active {
+  color: #1e3a8a;
+  font-weight: 700;
+}
+
+.perfil-page {
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+.perfil-identity {
+  text-align: center;
 }
 
 .pase-page,
@@ -499,5 +636,25 @@ a {
 
   .admin-content {
     padding: 16px;
+  }
+
+  .metrics-bar {
+    padding: 16px;
+  }
+
+  .hero-title {
+    font-size: 28px !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .portal-header {
+    height: 80px;
+    padding: 0 32px;
+  }
+
+  .portal-page,
+  .info-page {
+    padding: 32px 24px 64px;
   }
 }

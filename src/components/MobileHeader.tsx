@@ -1,4 +1,4 @@
-import { Avatar, Button, Dropdown, Space } from 'antd';
+import { Avatar, Button, Dropdown } from 'antd';
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@context/useAuth';
@@ -22,47 +22,45 @@ const MobileHeader = () => {
 
   return (
     <header className="mobile-header">
-      <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <Link to="/" className="mobile-header-brand">
         <img src={logo} alt="Misioneros Digitales" width={32} height={32} />
-        <span style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.15 }}>
-          <strong style={{ color: '#00236F', fontSize: 14 }}>
-            I Asamblea Misioneros Digitales
-          </strong>
-          <span
-            style={{
-              color: '#2563EB',
-              fontSize: 11,
-              letterSpacing: 0.8,
-              textTransform: 'uppercase',
-              fontWeight: 700,
-            }}
-          >
-            Caracas 2026
-          </span>
+        <span className="mobile-header-copy">
+          <strong>Misioneros Digitales</strong>
+          <span>Caracas 2026</span>
         </span>
       </Link>
-      <Space>
-        {token ? (
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: 'logout',
-                  icon: <LogoutOutlined />,
-                  label: 'Cerrar sesión',
-                  onClick: onLogout,
-                },
-              ],
-            }}
-          >
-            <Button type="text" style={{ padding: 0, height: 'auto' }}>
-              <Avatar style={{ background: '#1E3A8A' }}>{initials}</Avatar>
-            </Button>
-          </Dropdown>
-        ) : (
-          <Avatar style={{ background: '#1E3A8A' }} icon={<UserOutlined />} />
-        )}
-      </Space>
+      {token ? (
+        <Dropdown
+          trigger={['click']}
+          placement="bottomRight"
+          menu={{
+            items: [
+              {
+                key: 'perfil',
+                icon: <UserOutlined />,
+                label: 'Perfil',
+                onClick: () => navigate('/perfil'),
+              },
+              {
+                key: 'logout',
+                icon: <LogoutOutlined />,
+                label: 'Cerrar sesión',
+                onClick: onLogout,
+              },
+            ],
+          }}
+        >
+          <Button type="text" className="mobile-header-avatar" aria-label="Cuenta">
+            <Avatar size={36} style={{ background: '#1E3A8A' }}>
+              {initials}
+            </Avatar>
+          </Button>
+        </Dropdown>
+      ) : (
+        <Button type="text" className="mobile-header-avatar" onClick={() => navigate('/perfil')}>
+          <Avatar size={36} style={{ background: '#1E3A8A' }} icon={<UserOutlined />} />
+        </Button>
+      )}
     </header>
   );
 };

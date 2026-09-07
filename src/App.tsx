@@ -17,6 +17,7 @@ import RequireAdmin from '@components/RequireAdmin';
 import RequireAdminOnly from '@components/RequireAdminOnly';
 import RequireScan from '@components/RequireScan';
 import InfoPage from '@pages/InfoPage';
+import Perfil from '@pages/Perfil';
 
 const App = () => (
   <Layout style={{ minHeight: '100vh', background: '#F8F9FF' }}>
@@ -92,15 +93,7 @@ const App = () => (
             />
           }
         />
-        <Route
-          path="/perfil"
-          element={
-            <InfoPage
-              title="Mi Perfil"
-              description="Datos de acreditación, hospedaje y contacto diocesano."
-            />
-          }
-        />
+        <Route path="/perfil" element={<Perfil />} />
       </Route>
 
       <Route element={<RequireScan />}>

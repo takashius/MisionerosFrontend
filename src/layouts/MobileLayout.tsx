@@ -8,7 +8,7 @@ const MobileLayout = () => {
   const hideTabs = pathname.startsWith('/escaner');
 
   return (
-    <Layout className="mobile-shell">
+    <Layout className={`mobile-shell${hideTabs ? '' : ' has-tabbar'}`}>
       <MobileHeader />
       <Layout.Content className="mobile-content">
         <Outlet />

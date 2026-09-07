@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   App,
   Button,
@@ -35,6 +35,7 @@ import { useLookupParticipant } from '@api/participants';
 import { wasErrorToastShown } from '@utils/apiAuthError';
 import { getApiErrorMessage } from '@utils/getApiErrorMessage';
 import AdminLoginForm from '@components/AdminLoginForm';
+import { clearBadgeToken, saveBadgeToken } from '@utils/badgeSession';
 import logo from '../assets/logo.svg';
 
 const { Title, Paragraph, Text } = Typography;
@@ -47,9 +48,14 @@ const Portal = () => {
   const [helpOpen, setHelpOpen] = useState(false);
   const lookup = useLookupParticipant();
 
+  useEffect(() => {
+    clearBadgeToken();
+  }, []);
+
   const onAttendee = ({ cedula }: { cedula: string }) => {
     lookup.mutate(cedula.trim(), {
       onSuccess: (badge) => {
+        saveBadgeToken(badge.publicToken);
         navigate(`/pase/${badge.publicToken}`);
       },
       onError: (error) => {
@@ -68,7 +74,8 @@ const Portal = () => {
     <div className="portal-page">
       <section className="portal-hero">
         <Tag className="hero-pill" icon={<CalendarOutlined />} color="blue">
-          18 al 20 de Septiembre 2026 • Caracas, Venezuela · Sede CEV Montalbán
+          <span>18 al 20 de septiembre 2026</span>
+          <span>Caracas · Sede CEV Montalbán</span>
         </Tag>
         <img src={logo} alt="" width={56} height={56} className="hero-emblem" />
         <Title level={1} className="hero-title">

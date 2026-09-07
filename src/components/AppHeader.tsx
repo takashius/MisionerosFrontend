@@ -25,9 +25,7 @@ const AppHeader = () => {
       <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
         <img src={logo} alt="Misioneros Digitales" width={32} height={32} />
         <span style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2, minWidth: 0 }}>
-          <strong style={{ color: '#1E3A8A', fontSize: 16, whiteSpace: 'nowrap' }}>
-            I Asamblea de Misioneros Digitales
-          </strong>
+          <strong className="portal-header-title">I Asamblea de Misioneros Digitales</strong>
           <span style={{ color: '#757682', fontSize: 11, letterSpacing: 0.4 }}>
             Caracas 2026 • Sede CEV
           </span>

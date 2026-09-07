@@ -1,4 +1,3 @@
-import { Layout, Menu } from 'antd';
 import {
   IdcardOutlined,
   CalendarOutlined,
@@ -6,36 +5,39 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { badgePath } from '@utils/badgeSession';
 
 const items = [
   { key: '/pase', icon: <IdcardOutlined />, label: 'Credencial' },
   { key: '/programa', icon: <CalendarOutlined />, label: 'Programa' },
-  { key: '/mapa', icon: <EnvironmentOutlined />, label: 'Mapa CEV' },
-  { key: '/perfil', icon: <UserOutlined />, label: 'Mi Perfil' },
+  { key: '/mapa', icon: <EnvironmentOutlined />, label: 'Mapa' },
+  { key: '/perfil', icon: <UserOutlined />, label: 'Perfil' },
 ];
+
+const tabKey = (pathname: string) => {
+  if (pathname.startsWith('/pase')) return '/pase';
+  return pathname;
+};
 
 const MobileTabBar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const current = tabKey(pathname);
 
   return (
-    <Layout.Footer
-      style={{
-        position: 'sticky',
-        bottom: 0,
-        padding: 0,
-        background: '#fff',
-        borderTop: '1px solid #E2E8F0',
-      }}
-    >
-      <Menu
-        mode="horizontal"
-        selectedKeys={[pathname.startsWith('/pase') ? '/pase' : pathname]}
-        items={items}
-        onClick={({ key }) => navigate(key)}
-        style={{ justifyContent: 'space-around', border: 'none' }}
-      />
-    </Layout.Footer>
+    <nav className="mobile-tabbar" aria-label="Navegación de credencial">
+      {items.map((item) => (
+        <button
+          key={item.key}
+          type="button"
+          className={`mobile-tabbar-item${current === item.key ? ' is-active' : ''}`}
+          onClick={() => navigate(item.key === '/pase' ? badgePath() : item.key)}
+        >
+          <span className="mobile-tabbar-icon">{item.icon}</span>
+          <span className="mobile-tabbar-label">{item.label}</span>
+        </button>
+      ))}
+    </nav>
   );
 };
 

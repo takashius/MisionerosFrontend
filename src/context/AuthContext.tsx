@@ -10,6 +10,7 @@ import {
   type AuthUser,
   type LoginResponse,
 } from '@app-types/auth';
+import { clearBadgeToken } from '@utils/badgeSession';
 
 const readUser = (): AuthUser | null => {
   const raw = localStorage.getItem('UserData');
@@ -51,6 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('Token');
     localStorage.removeItem('UserData');
     localStorage.removeItem('Roles');
+    clearBadgeToken();
   }, []);
 
   const value = useMemo(() => {

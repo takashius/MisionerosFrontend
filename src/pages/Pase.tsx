@@ -6,8 +6,10 @@ import {
   HomeOutlined,
   SafetyCertificateOutlined,
 } from '@ant-design/icons';
-import { Link, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { useBadgeByToken } from '@api/participants';
+import { readBadgeToken, saveBadgeToken } from '@utils/badgeSession';
 import {
   BADGE_STATES,
   STATE_LABELS,
@@ -20,8 +22,26 @@ import { getApiErrorMessage } from '@utils/getApiErrorMessage';
 const { Title, Text, Paragraph } = Typography;
 
 const Pase = () => {
-  const { token } = useParams<{ token: string }>();
+  const { token: routeToken } = useParams<{ token: string }>();
+  const storedToken = readBadgeToken();
+  const token = routeToken || storedToken || undefined;
   const badge = useBadgeByToken(token);
+
+  useEffect(() => {
+    if (routeToken) {
+      saveBadgeToken(routeToken);
+    }
+  }, [routeToken]);
+
+  useEffect(() => {
+    if (badge.data?.publicToken) {
+      saveBadgeToken(badge.data.publicToken);
+    }
+  }, [badge.data?.publicToken]);
+
+  if (!routeToken && storedToken) {
+    return <Navigate to={`/pase/${storedToken}`} replace />;
+  }
 
   if (!token) {
     return (
