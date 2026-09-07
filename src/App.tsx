@@ -17,6 +17,8 @@ import RequireAdmin from '@components/RequireAdmin';
 import RequireAdminOnly from '@components/RequireAdminOnly';
 import RequireScan from '@components/RequireScan';
 import InfoPage from '@pages/InfoPage';
+import Cronograma from '@pages/Cronograma';
+import CronogramaAdmin from '@pages/admin/CronogramaAdmin';
 import Perfil from '@pages/Perfil';
 
 const App = () => (
@@ -25,15 +27,7 @@ const App = () => (
       <Route element={<PortalLayout />}>
         <Route path="/" element={<Portal />} />
         <Route path="/registro" element={<Registro />} />
-        <Route
-          path="/cronograma"
-          element={
-            <InfoPage
-              title="Cronograma"
-              description="Agenda oficial de ponencias, liturgia y mesas de trabajo."
-            />
-          }
-        />
+        <Route path="/cronograma" element={<Cronograma />} />
         <Route
           path="/ponentes"
           element={
@@ -78,7 +72,7 @@ const App = () => (
         <Route
           path="/programa"
           element={
-            <InfoPage
+            <Cronograma
               title="Programa"
               description="Itinerario de la asamblea para acreditados en sede."
             />
@@ -106,6 +100,7 @@ const App = () => (
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Admin />} />
           <Route path="participantes" element={<Participantes />} />
+          <Route path="cronograma" element={<CronogramaAdmin />} />
           <Route
             path="usuarios"
             element={

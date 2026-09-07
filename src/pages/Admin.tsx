@@ -1,5 +1,5 @@
 import { Breadcrumb, Button, Card, Col, Progress, Row, Space, Spin, Typography } from 'antd';
-import { TeamOutlined } from '@ant-design/icons';
+import { CalendarOutlined, TeamOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useParticipantStats } from '@api/participants';
 
@@ -36,6 +36,9 @@ const Admin = () => {
           <Space>
             <Link to="/registro">
               <Button>Registro público</Button>
+            </Link>
+            <Link to="/admin/cronograma">
+              <Button icon={<CalendarOutlined />}>Cronograma</Button>
             </Link>
             <Link to="/admin/participantes">
               <Button type="primary" icon={<TeamOutlined />}>

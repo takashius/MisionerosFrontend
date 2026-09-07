@@ -1,5 +1,12 @@
 import { Layout, Menu, Avatar, Button, Dropdown, Space, Typography } from 'antd';
-import { IdcardOutlined, TeamOutlined, BellOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  CalendarOutlined,
+  IdcardOutlined,
+  TeamOutlined,
+  BellOutlined,
+  LogoutOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@context/useAuth';
 import { useLogout } from '@api/auth';
@@ -19,6 +26,11 @@ const AdminLayout = () => {
       key: '/admin/participantes',
       icon: <TeamOutlined />,
       label: <Link to="/admin/participantes">Participantes</Link>,
+    },
+    {
+      key: '/admin/cronograma',
+      icon: <CalendarOutlined />,
+      label: <Link to="/admin/cronograma">Cronograma</Link>,
     },
     ...(isAdmin
       ? [

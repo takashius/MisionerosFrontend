@@ -18,6 +18,7 @@ export default defineConfig({
       '/user': apiProxy,
       '/participant': apiProxy,
       '/scan': apiProxy,
+      '/schedule': apiProxy,
       '/active-response': apiProxy,
     },
   },
