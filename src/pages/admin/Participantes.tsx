@@ -5,6 +5,8 @@ import {
   Breadcrumb,
   Button,
   Card,
+  Descriptions,
+  Drawer,
   Form,
   Input,
   Modal,
@@ -20,6 +22,7 @@ import type { ColumnsType } from 'antd/es/table';
 import {
   CheckCircleOutlined,
   EditOutlined,
+  EyeOutlined,
   HomeOutlined,
   QrcodeOutlined,
 } from '@ant-design/icons';
@@ -60,6 +63,7 @@ const Participantes = () => {
   const [estado, setEstado] = useState<ParticipantState | ''>('');
   const [tipo, setTipo] = useState<ParticipantType | ''>('');
   const [paying, setPaying] = useState<Participant | null>(null);
+  const [ficha, setFicha] = useState<Participant | null>(null);
   const [editing, setEditing] = useState<Participant | null>(null);
   const [lodging, setLodging] = useState<Participant | null>(null);
   const [qrParticipant, setQrParticipant] = useState<Participant | null>(null);
@@ -90,7 +94,8 @@ const Participantes = () => {
             <Text strong>{participantFullName(row)}</Text>
             <br />
             <Text type="secondary">
-              {row.organizacionComunidad} • {row.ciudad}
+              {[row.arquidiocesis, row.organizacionComunidad, row.ciudad].filter(Boolean).join(' • ') ||
+                '—'}
             </Text>
           </span>
         </Space>
@@ -102,8 +107,9 @@ const Participantes = () => {
       render: (value: ParticipantType) => <Tag color={TYPE_COLORS[value]}>{TYPE_LABELS[value]}</Tag>,
     },
     {
-      title: 'WhatsApp',
+      title: 'Teléfono',
       dataIndex: 'whatsapp',
+      render: (value?: string) => value || '—',
     },
     {
       title: 'Alojamiento',
@@ -120,6 +126,9 @@ const Participantes = () => {
       align: 'right',
       render: (_, row) => (
         <Space wrap>
+          <Button size="small" icon={<EyeOutlined />} onClick={() => setFicha(row)}>
+            Ficha
+          </Button>
           {canConfirmPayment && row.estado === 'registrado' && (
             <Button size="small" type="primary" onClick={() => setPaying(row)}>
               Confirmar pago
@@ -255,6 +264,8 @@ const Participantes = () => {
         }}
       />
 
+      <FichaDrawer participant={ficha} onClose={() => setFicha(null)} />
+
       <TypoModal
         participant={editing}
         loading={fixTypo.isPending}
@@ -296,6 +307,13 @@ const Participantes = () => {
       />
     </div>
   );
+};
+
+const formatDate = (value?: string) => {
+  if (!value) return undefined;
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return parsed.toLocaleDateString('es-VE');
 };
 
 const QrModal = ({
@@ -367,11 +385,54 @@ const PaymentModal = ({
       onOk={() => form.submit()}
       okText="Confirmar y enviar QR"
       destroyOnClose
+      afterOpenChange={(open) => {
+        if (open && participant) {
+          form.setFieldsValue({
+            referenciaComprobante:
+              participant.pagoInscripcion?.referencia ||
+              participant.pagoValidado?.referenciaComprobante ||
+              '',
+          });
+        }
+      }}
     >
       {participant && (
-        <Paragraph>
-          {participantFullName(participant)} · {participant.documentoId}
-        </Paragraph>
+        <>
+          <Paragraph>
+            {participantFullName(participant)} · {participant.documentoId}
+          </Paragraph>
+          {(participant.pagoInscripcion?.titular ||
+            participant.pagoInscripcion?.banco ||
+            participant.pagoInscripcion?.monto ||
+            participant.pagoInscripcion?.comprobanteUrl) && (
+            <Descriptions size="small" column={1} style={{ marginBottom: 16 }} bordered>
+              {participant.pagoInscripcion?.titular && (
+                <Descriptions.Item label="Titular">{participant.pagoInscripcion.titular}</Descriptions.Item>
+              )}
+              {participant.pagoInscripcion?.banco && (
+                <Descriptions.Item label="Banco">{participant.pagoInscripcion.banco}</Descriptions.Item>
+              )}
+              {participant.pagoInscripcion?.fecha && (
+                <Descriptions.Item label="Fecha de pago">
+                  {formatDate(participant.pagoInscripcion.fecha)}
+                </Descriptions.Item>
+              )}
+              {participant.pagoInscripcion?.monto && (
+                <Descriptions.Item label="Monto">{participant.pagoInscripcion.monto}</Descriptions.Item>
+              )}
+              {participant.pagoInscripcion?.tasaBcv && (
+                <Descriptions.Item label="Tasa BCV">{participant.pagoInscripcion.tasaBcv}</Descriptions.Item>
+              )}
+              {participant.pagoInscripcion?.comprobanteUrl && (
+                <Descriptions.Item label="Comprobante">
+                  <a href={participant.pagoInscripcion.comprobanteUrl} target="_blank" rel="noreferrer">
+                    Ver archivo
+                  </a>
+                </Descriptions.Item>
+              )}
+            </Descriptions>
+          )}
+        </>
       )}
       <Form form={form} layout="vertical" onFinish={(values) => onSubmit(values.referenciaComprobante)}>
         <Form.Item
@@ -437,17 +498,78 @@ const TypoModal = ({
         <Form.Item name="email" label="Correo" rules={[{ required: true, type: 'email' }]}>
           <Input />
         </Form.Item>
-        <Form.Item name="whatsapp" label="WhatsApp" rules={[{ required: true }]}>
+        <Form.Item name="whatsapp" label="Teléfono">
           <Input />
         </Form.Item>
-        <Form.Item name="ciudad" label="Ciudad" rules={[{ required: true }]}>
+        <Form.Item name="ciudad" label="Ciudad">
           <Input />
         </Form.Item>
-        <Form.Item name="organizacionComunidad" label="Organización o comunidad" rules={[{ required: true }]}>
+        <Form.Item name="organizacionComunidad" label="Parroquia o comunidad eclesial">
           <Input />
         </Form.Item>
       </Form>
     </Modal>
+  );
+};
+
+const FichaDrawer = ({
+  participant,
+  onClose,
+}: {
+  participant: Participant | null;
+  onClose: () => void;
+}) => {
+  const items = participant
+    ? [
+        { label: 'Correo', children: participant.email },
+        { label: 'Cédula', children: participant.documentoId },
+        { label: 'Teléfono', children: participant.whatsapp },
+        { label: 'Edad', children: participant.edad },
+        { label: 'Fecha de nacimiento', children: formatDate(participant.fechaNacimiento) },
+        { label: 'Sexo', children: participant.sexo === 'M' ? 'Masculino' : participant.sexo === 'F' ? 'Femenino' : undefined },
+        { label: 'Arquidiócesis', children: participant.arquidiocesis },
+        { label: 'Parroquia / comunidad', children: participant.organizacionComunidad },
+        { label: 'Ciudad', children: participant.ciudad },
+        { label: 'Redes sociales', children: participant.redesSociales },
+        { label: 'Estado de vida', children: participant.estadoVida },
+        { label: 'Teléfono de emergencia', children: participant.telefonoEmergencia },
+        {
+          label: 'Alergias o enfermedad',
+          children:
+            participant.tieneAlergiaEnfermedad === true
+              ? participant.alergiasEnfermedadDetalle || 'Sí'
+              : participant.tieneAlergiaEnfermedad === false
+                ? 'No'
+                : undefined,
+        },
+        { label: 'Titular del pago', children: participant.pagoInscripcion?.titular },
+        { label: 'Banco', children: participant.pagoInscripcion?.banco },
+        { label: 'Fecha de pago', children: formatDate(participant.pagoInscripcion?.fecha) },
+        { label: 'Referencia', children: participant.pagoInscripcion?.referencia },
+        { label: 'Monto', children: participant.pagoInscripcion?.monto },
+        { label: 'Tasa BCV', children: participant.pagoInscripcion?.tasaBcv },
+        {
+          label: 'Comprobante',
+          children: participant.pagoInscripcion?.comprobanteUrl ? (
+            <a href={participant.pagoInscripcion.comprobanteUrl} target="_blank" rel="noreferrer">
+              Ver archivo
+            </a>
+          ) : undefined,
+        },
+      ].filter((item) => item.children !== undefined && item.children !== '')
+    : [];
+
+  return (
+    <Drawer
+      title={participant ? participantFullName(participant) : 'Ficha'}
+      open={Boolean(participant)}
+      onClose={onClose}
+      width={440}
+    >
+      {participant && (
+        <Descriptions column={1} size="small" bordered items={items} />
+      )}
+    </Drawer>
   );
 };
 

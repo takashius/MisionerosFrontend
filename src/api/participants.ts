@@ -55,6 +55,16 @@ export const useRegisterParticipant = () =>
     },
   });
 
+export const useUploadReceipt = () =>
+  useMutation({
+    mutationFn: async (file: File) => {
+      const body = new FormData();
+      body.append('comprobante', file);
+      const { data } = await ERDEAxios.post<{ url: string }>('/participant/upload-receipt', body);
+      return data;
+    },
+  });
+
 export const useLookupParticipant = () =>
   useMutation({
     mutationFn: async (documentoId: string) => {

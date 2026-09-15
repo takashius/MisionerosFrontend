@@ -28,6 +28,16 @@ export type PagoValidado = {
   referenciaComprobante?: string;
 };
 
+export type PagoInscripcion = {
+  titular?: string;
+  banco?: string;
+  fecha?: string;
+  referencia?: string;
+  monto?: string;
+  tasaBcv?: string;
+  comprobanteUrl?: string;
+};
+
 export type Participant = {
   _id: string;
   publicToken: string;
@@ -35,15 +45,23 @@ export type Participant = {
   apellidos: string;
   documentoId: string;
   fechaNacimiento?: string;
+  edad?: number;
   sexo?: Sexo;
-  whatsapp: string;
+  whatsapp?: string;
   email: string;
-  ciudad: string;
-  organizacionComunidad: string;
+  ciudad?: string;
+  arquidiocesis?: string;
+  organizacionComunidad?: string;
+  redesSociales?: string;
   tipo: ParticipantType;
   estado: ParticipantState;
   requiereAlojamiento: boolean;
   habitacionAsignada?: string | null;
+  tieneAlergiaEnfermedad?: boolean;
+  alergiasEnfermedadDetalle?: string;
+  estadoVida?: string;
+  telefonoEmergencia?: string;
+  pagoInscripcion?: PagoInscripcion;
   pagoValidado: PagoValidado;
   comunicaciones: {
     qrEnviadoEmail: boolean;
@@ -59,8 +77,8 @@ export type BadgeParticipant = {
   documentoId: string;
   tipo: ParticipantType;
   estado: ParticipantState;
-  organizacionComunidad: string;
-  ciudad: string;
+  organizacionComunidad?: string;
+  ciudad?: string;
   requiereAlojamiento: boolean;
   habitacionAsignada?: string | null;
 };
@@ -86,14 +104,22 @@ export type RegisterParticipantPayload = {
   nombres: string;
   apellidos: string;
   documentoId: string;
-  fechaNacimiento?: string;
-  sexo: Sexo;
-  whatsapp: string;
   email: string;
-  ciudad: string;
-  organizacionComunidad: string;
-  tipo: ParticipantType;
-  requiereAlojamiento: boolean;
+  fechaNacimiento?: string;
+  edad?: number;
+  sexo?: Sexo;
+  whatsapp?: string;
+  ciudad?: string;
+  arquidiocesis?: string;
+  organizacionComunidad?: string;
+  redesSociales?: string;
+  tipo?: ParticipantType;
+  requiereAlojamiento?: boolean;
+  tieneAlergiaEnfermedad?: boolean;
+  alergiasEnfermedadDetalle?: string;
+  estadoVida?: string;
+  telefonoEmergencia?: string;
+  pagoInscripcion?: PagoInscripcion;
 };
 
 export type FixTypoPayload = {
@@ -145,6 +171,15 @@ export const STATE_COLORS: Record<ParticipantState, string> = {
   checkin_realizado: 'green',
   checkout_realizado: 'geekblue',
 };
+
+export const ESTADOS_VIDA = [
+  'Soltero/a',
+  'Casado/a',
+  'Viudo/a',
+  'Religioso/a',
+  'Sacerdote',
+  'Diácono',
+] as const;
 
 export const BADGE_STATES: ParticipantState[] = [
   'confirmado',
