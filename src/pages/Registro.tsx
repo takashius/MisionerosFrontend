@@ -69,10 +69,13 @@ const Registro = () => {
           form={form}
           initialValues={{ tipo: 'misionero', sexo: 'M', requiereAlojamiento: true }}
           onFinish={(values) => {
+            const { fechaNacimiento, ...rest } = values;
             register.mutate(
               {
-                ...values,
-                fechaNacimiento: new Date(`${values.fechaNacimiento}T00:00:00`).toISOString(),
+                ...rest,
+                ...(fechaNacimiento
+                  ? { fechaNacimiento: new Date(`${fechaNacimiento}T00:00:00`).toISOString() }
+                  : {}),
               },
               {
                 onSuccess: () => setDone(true),
@@ -101,11 +104,7 @@ const Registro = () => {
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
-              <Form.Item
-                name="fechaNacimiento"
-                label="Fecha de nacimiento"
-                rules={[{ required: true, message: 'Obligatorio' }]}
-              >
+              <Form.Item name="fechaNacimiento" label="Fecha de nacimiento">
                 <Input size="large" type="date" />
               </Form.Item>
             </Col>

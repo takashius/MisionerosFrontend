@@ -86,7 +86,7 @@ export type RegisterParticipantPayload = {
   nombres: string;
   apellidos: string;
   documentoId: string;
-  fechaNacimiento: string;
+  fechaNacimiento?: string;
   sexo: Sexo;
   whatsapp: string;
   email: string;
