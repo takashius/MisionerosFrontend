@@ -1,6 +1,7 @@
 import { Button, Typography } from 'antd';
-import { EnvironmentOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, PhoneOutlined } from '@ant-design/icons';
 import { VENUE, venueEmbedUrl, venueMapsUrl } from '@data/venue';
+import { CONTACT_PHONE_LOCAL, CONTACT_PHONE_TEL } from '@data/contact';
 
 const { Text } = Typography;
 
@@ -20,6 +21,14 @@ const VenueMap = ({ height = 360 }: { height?: number }) => (
         {VENUE.name}
       </Text>
       <Text type="secondary">{VENUE.address}</Text>
+      <Button
+        type="link"
+        icon={<PhoneOutlined />}
+        href={`tel:${CONTACT_PHONE_TEL}`}
+        style={{ paddingLeft: 0, display: 'block' }}
+      >
+        {CONTACT_PHONE_LOCAL}
+      </Button>
       <Button
         type="link"
         icon={<EnvironmentOutlined />}

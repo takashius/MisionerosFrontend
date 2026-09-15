@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Alert, Button, Card, Col, Form, Input, Result, Row, Typography } from 'antd';
+import { Alert, Button, Card, Col, Form, Input, Result, Row, Space, Typography } from 'antd';
+import { MessageOutlined, PhoneOutlined } from '@ant-design/icons';
 import { useSendContact, type ContactPayload } from '@api/contact';
 import { wasErrorToastShown } from '@utils/apiAuthError';
 import { getApiErrorMessage } from '@utils/getApiErrorMessage';
+import { CONTACT_PHONE_LOCAL, CONTACT_PHONE_TEL, CONTACT_WHATSAPP_URL } from '@data/contact';
 import VenueMap from '@components/VenueMap';
 
 const { Title, Paragraph } = Typography;
@@ -41,6 +43,14 @@ const Contacto = () => {
         Escribe al equipo de la I Asamblea de Misioneros Digitales o ubica la sede
         en Montalbán.
       </Paragraph>
+      <Space wrap style={{ marginBottom: 16 }}>
+        <Button icon={<PhoneOutlined />} href={`tel:${CONTACT_PHONE_TEL}`}>
+          {CONTACT_PHONE_LOCAL}
+        </Button>
+        <Button type="primary" icon={<MessageOutlined />} href={CONTACT_WHATSAPP_URL} target="_blank" rel="noreferrer">
+          WhatsApp
+        </Button>
+      </Space>
 
       <Row gutter={[24, 24]}>
         <Col xs={24} lg={12}>

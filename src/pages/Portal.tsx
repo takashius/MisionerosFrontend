@@ -36,6 +36,7 @@ import { wasErrorToastShown } from '@utils/apiAuthError';
 import { getApiErrorMessage } from '@utils/getApiErrorMessage';
 import AdminLoginForm from '@components/AdminLoginForm';
 import { clearBadgeToken, saveBadgeToken } from '@utils/badgeSession';
+import { CONTACT_PHONE_LOCAL, CONTACT_PHONE_TEL, CONTACT_WHATSAPP_URL } from '@data/contact';
 import logo from '../assets/logo.svg';
 
 const { Title, Paragraph, Text } = Typography;
@@ -118,7 +119,9 @@ const Portal = () => {
                 <PhoneOutlined />
               </span>
               <span>
-                <Text strong>+58 412-MISION</Text>
+                <a href={`tel:${CONTACT_PHONE_TEL}`} style={{ color: 'inherit' }}>
+                  <Text strong>{CONTACT_PHONE_LOCAL}</Text>
+                </a>
                 <br />
                 <Text type="secondary">Mesa Técnica Pastoral WhatsApp</Text>
               </span>
@@ -343,7 +346,13 @@ const Portal = () => {
           </Space>
           <Space wrap>
             <Button onClick={() => setHelpOpen(true)}>Preguntas Frecuentes</Button>
-            <Button type="primary" icon={<MessageOutlined />} href="https://wa.me/584120000000">
+            <Button
+              type="primary"
+              icon={<MessageOutlined />}
+              href={CONTACT_WHATSAPP_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
               WhatsApp Asistencia
             </Button>
           </Space>
