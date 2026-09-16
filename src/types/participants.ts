@@ -122,13 +122,33 @@ export type RegisterParticipantPayload = {
   pagoInscripcion?: PagoInscripcion;
 };
 
-export type FixTypoPayload = {
-  nombres?: string;
-  apellidos?: string;
-  email?: string;
+export type FixTypoPayload = Omit<RegisterParticipantPayload, 'documentoId' | 'tipo'>;
+
+export type ParticipantFormValues = {
+  nombres: string;
+  apellidos: string;
+  documentoId?: string;
+  email: string;
+  edad?: number | null;
+  fechaNacimiento?: string;
+  sexo?: Sexo;
   whatsapp?: string;
-  ciudad?: string;
+  telefonoEmergencia?: string;
+  arquidiocesis?: string;
   organizacionComunidad?: string;
+  redesSociales?: string;
+  ciudad?: string;
+  estadoVida?: string;
+  tieneAlergiaEnfermedad?: boolean;
+  alergiasEnfermedadDetalle?: string;
+  tipo?: ParticipantType;
+  requiereAlojamiento?: boolean;
+  pagoTitular?: string;
+  pagoBanco?: string;
+  pagoFecha?: string;
+  pagoReferencia?: string;
+  pagoMonto?: string;
+  pagoTasaBcv?: string;
 };
 
 export type ParticipantListParams = {

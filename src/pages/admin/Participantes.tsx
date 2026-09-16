@@ -33,10 +33,13 @@ import {
   useParticipantList,
   useUpdateLodging,
   useUpdateParticipantStatus,
+  useUploadReceipt,
 } from '@api/participants';
 import { useAuth } from '@context/useAuth';
 import { wasErrorToastShown } from '@utils/apiAuthError';
 import { getApiErrorMessage } from '@utils/getApiErrorMessage';
+import { buildParticipantWritePayload, participantToFormValues } from '@utils/participantForm';
+import ParticipantFormFields from '@components/ParticipantFormFields';
 import {
   BADGE_STATES,
   PARTICIPANT_STATES,
@@ -49,6 +52,7 @@ import {
   participantInitials,
   type FixTypoPayload,
   type Participant,
+  type ParticipantFormValues,
   type ParticipantState,
   type ParticipantType,
 } from '@app-types/participants';
@@ -270,16 +274,16 @@ const Participantes = () => {
         participant={editing}
         loading={fixTypo.isPending}
         onCancel={() => setEditing(null)}
-        onSubmit={(values) => {
+        onSubmit={(payload) => {
           if (!editing) return;
           fixTypo.mutate(
-            { id: editing._id, ...values },
+            { id: editing._id, ...payload },
             {
               onSuccess: () => {
-                message.success('Datos tipográficos actualizados');
+                message.success('Datos actualizados');
                 setEditing(null);
               },
-              onError: (error) => showError(error, 'No se pudo corregir'),
+              onError: (error) => showError(error, 'No se pudo guardar'),
             }
           );
         }}
@@ -458,27 +462,29 @@ const TypoModal = ({
   onCancel: () => void;
   onSubmit: (values: FixTypoPayload) => void;
 }) => {
-  const [form] = Form.useForm<FixTypoPayload>();
+  const { message } = App.useApp();
+  const [form] = Form.useForm<ParticipantFormValues>();
+  const uploadReceipt = useUploadReceipt();
+  const [comprobante, setComprobante] = useState<File | null>(null);
 
   return (
     <Modal
-      title="Corrección tipográfica"
+      title="Editar participante"
       open={Boolean(participant)}
-      onCancel={onCancel}
-      confirmLoading={loading}
+      onCancel={() => {
+        setComprobante(null);
+        onCancel();
+      }}
+      confirmLoading={loading || uploadReceipt.isPending}
       onOk={() => form.submit()}
       okText="Guardar"
+      width={840}
+      styles={{ body: { maxHeight: '70vh', overflowY: 'auto' } }}
       destroyOnClose
       afterOpenChange={(open) => {
         if (open && participant) {
-          form.setFieldsValue({
-            nombres: participant.nombres,
-            apellidos: participant.apellidos,
-            email: participant.email,
-            whatsapp: participant.whatsapp,
-            ciudad: participant.ciudad,
-            organizacionComunidad: participant.organizacionComunidad,
-          });
+          setComprobante(null);
+          form.setFieldsValue(participantToFormValues(participant));
         }
       }}
     >
@@ -488,25 +494,33 @@ const TypoModal = ({
           se modifican aquí.
         </Paragraph>
       )}
-      <Form form={form} layout="vertical" onFinish={onSubmit}>
-        <Form.Item name="nombres" label="Nombres" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="apellidos" label="Apellidos" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="email" label="Correo" rules={[{ required: true, type: 'email' }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="whatsapp" label="Teléfono">
-          <Input />
-        </Form.Item>
-        <Form.Item name="ciudad" label="Ciudad">
-          <Input />
-        </Form.Item>
-        <Form.Item name="organizacionComunidad" label="Parroquia o comunidad eclesial">
-          <Input />
-        </Form.Item>
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={async (values) => {
+          let comprobanteUrl = participant?.pagoInscripcion?.comprobanteUrl;
+          if (comprobante) {
+            try {
+              const uploaded = await uploadReceipt.mutateAsync(comprobante);
+              comprobanteUrl = uploaded.url;
+            } catch (error) {
+              if (!wasErrorToastShown(error)) {
+                message.error(getApiErrorMessage(error, 'No se pudo subir el comprobante'));
+              }
+              return;
+            }
+          }
+          const payload = buildParticipantWritePayload(values, { comprobanteUrl, asUpdate: true });
+          onSubmit(payload as FixTypoPayload);
+        }}
+      >
+        <ParticipantFormFields
+          size="middle"
+          showDocumento={false}
+          showTipo={false}
+          existingComprobanteUrl={participant?.pagoInscripcion?.comprobanteUrl}
+          onComprobanteChange={setComprobante}
+        />
       </Form>
     </Modal>
   );
